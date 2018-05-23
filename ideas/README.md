@@ -2,6 +2,9 @@
 
 Here are a few different surveys and introductions to the field of generative poetry that I've found useful.
 
+*Pentametron*
+
+https://twitter.com/pentametron?lang=en
 
 *Andrej Karpathy*
 
