@@ -3,44 +3,62 @@ from collections import Counter
 
 class Token():
 
-    def __init__(features, n):
+    def __init__(features):
+        self.n = len(features)
         self.features = features
     
+class Corpus():
+    def __init__(self, filename):
+        # todo read in file
+        self.__sequences = list()
+        
+    def __iter__(self):
+        return iter(self.__sequences.)
+
+    def __getitem__(self, val):
+        return self.__sequences[val]
+        
+    def set_sequences(sequences):
+        self.__sequences = sequences
 
 class MarkovChain():
+
+    END = '<END>'
+    PREFIX = '<PRE-{}>'
     
-    def __init__(corpus, n):
+    def __init__(corpus, N):
         """
         Reads a corpus, a list of sentences. A sentence is a list of tokens. Each token is of an arbitrary number of features.
-        :param n: the number length of the markov chain, e.g. 2. 
+        :param N: the length of the markov chain, e.g. 2. 
         """
 
-        self.n = n
-        self.ngrams = Counter()
-    
-        for sentence in corpus:
-            for w in range(len(senttence) + 1):
-                # set token to the current word, or the end of feed character
-                token = sentence[w] if w != len(sentence) else '<END>'
-                
-                ngrams = []
-                for i in range(len(n)):
-                    ngrams[i - 1] = make_ngrams(i corpus)
+        self.N = N
 
-                # set u, v to the previous words or the end 
-                u = sentence[w - 2] if w > 1 else '<START-2>'
-                v = sentence[w - 1] if w > 0 else '<START-1>'
-                
-                # Record the ngram (add to the running count of the number of this n-gram seen)
-                self.ngrams[(u, v)] += 1
+        self.ngrams = __count_ngrams(self.N, corpus)
 
-        def make_ngrams(n, corpus):
-            ngrams = Counter()
+    def __count_ngrams(N, corpus):
+        """
+        Untested. Make ngrams from a corpus.
+        """
 
-            # TODO Make this work for arbitrary n
-                  # prev_n = []
-                  # for i in range(n - 1):
-                  #    token = sentence[w - (i + 1)]
-                  #    ngram[i] = sentence[token]
+        ngrams = Counter()
 
-            return ngrams 
+        # Make each ngram for n in {1..N}
+        for sequence in corpus:
+            for token_index in len(sequence):
+                for i in reversed(range(1, N)):
+                    ngram = sequence[token_index - i: token_index]
+                    ngrams[ngram] += 1
+
+        return ngrams
+
+    def preprocess_corpus(corpus):
+        """
+        Add the prefix and suffix tokens for each sequence in the corpus.
+        """
+        sequences = []
+        for sequence in corpus:
+            sequence = [PREFIX.format(i) for i in range(1, self.N + 1)] + sequence + [END]
+
+        corpus.set_sequences(seqeunces)
+
