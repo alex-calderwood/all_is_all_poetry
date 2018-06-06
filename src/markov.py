@@ -1,16 +1,38 @@
 import nltk
 from collections import Counter
 
+END = '<END>'
+PREFIX = '<PRE-{}>'
+
 class Token():
 
-    def __init__(features):
+    def __init__(self, features):
         self.n = len(features)
         self.features = features
+
+class Sequence():
+    def __init__(self, list):
+        self.__list = list
+
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            step = 1 if key.step is None else key.step
+            return [self.__getitem__(i) for i in range(key.start, key.stop, step)]
+
+        if key < 0:
+            return PREFIX.format(-key)
+        elif key == len(self.__list):
+            return END
+        else:
+            return self.__list[key]
+
+    def __len__(self):
+        return len(self.__list)
     
 class Corpus():
     def __init__(self, filename):
         with open(filename, 'r') as f:
-            self.__sequences = [line.strip().split(' ') for line in f.readlines()]
+            self.__sequences = [Sequence(line.strip().split(' ')) for line in f.readlines()]
         
     def __iter__(self):
         return iter(self.__sequences)
@@ -26,9 +48,6 @@ class Corpus():
 
 
 class MarkovChain():
-
-    END = '<END>'
-    PREFIX = '<PRE-{}>'
     
     def __init__(self, corpus, N):
         """
@@ -40,8 +59,8 @@ class MarkovChain():
 
         self.ngrams = self.__count_ngrams(corpus)
 
-        for key, value in self.ngrams:
-             print(key, value)
+        for thing in self.ngrams:
+            print(thing)
 
     def __count_ngrams(self, corpus):
         """
@@ -52,26 +71,17 @@ class MarkovChain():
 
         # Make each ngram for n in {1..N}
         for sequence in corpus:
-            for token_index in len(sequence):
-                for i in reversed(range(1, self.N)):
-                    ngram = sequence[token_index - i: token_index]
-                    ngrams[ngram] += 1
+            for token_index in range(len(sequence) + 1):
+                # for n in reversed(range(1, self.N)):
+                for n in [1]:
+                    ngram = sequence[token_index - n: token_index]
+                    print(token_index - n, token_index, ngram)
+                    ngrams[tuple(ngram)] += 1
 
         return ngrams
-
-    def preprocess_corpus(self, corpus):
-        """
-        Add the prefix and suffix tokens for each sequence in the corpus.
-        """
-        sequences = []
-        for sequence in corpus:
-            sequence = [PREFIX.format(i) for i in range(1, self.N + 1)] + sequence + [END]
-
-        corpus.set_sequences(seqeunces)
 
 
 if __name__ == '__main__':
     corpus = Corpus('testcorpus.txt')
-    print(corpus)
-    mk = MarkovChain(2, corpus)
+    mk = MarkovChain(corpus, 2)
 
