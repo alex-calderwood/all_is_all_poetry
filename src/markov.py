@@ -41,7 +41,7 @@ class MarkovChain():
         self.ngrams = self.__count_ngrams(corpus)
 
         for key, value in self.ngrams:
-            print(key, value)
+             print(key, value)
 
     def __count_ngrams(self, corpus):
         """
