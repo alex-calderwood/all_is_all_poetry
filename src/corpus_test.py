@@ -1,5 +1,5 @@
 import unittest
-from src.markov import Corpus
+from src.corpus import Corpus
 
 class TestStringMethods(unittest.TestCase):
 
