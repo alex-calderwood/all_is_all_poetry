@@ -1,7 +1,7 @@
 # Written by Alex Calderwood on June 6th, 2018
 
-END = '<END>'
-PREFIX = '<PRE-{}>'
+END = '<\\>'
+PREFIX = '<P-{}>'
 
 class Token():
 

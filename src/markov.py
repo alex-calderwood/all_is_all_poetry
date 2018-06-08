@@ -11,7 +11,7 @@ class PoemEngine():
         pass
 
 
-class MarkovChain(PoemEngine):
+class NaiveBayes(PoemEngine):
     
     def __init__(self, N):
         """
@@ -21,6 +21,37 @@ class MarkovChain(PoemEngine):
 
         self.N = N
 
+    def predict():
+        poss_sequences = []
+        
+        return Math.argmax([(s, prob(s)) for s in poss_sequences])
+
+    def prob(sequence):
+        """
+        Return the probability of the given sequence.
+        """
+        p = 1.0
+
+        for trigram in iterate_ngrams(sequence, n=3):
+            p *= p(trigram[2], trigram[:-1])
+
+        return p
+
+    def max_y(x):
+        max_p = 0
+        for y in Y:
+            p = p(y, x)
+            max_y = None
+            if p > max_p:
+                max_p = p
+                max_y = y
+        return max_y
+
+    def p(y, x):
+        """
+        :return conditional probability of y given x P(y|x) according to estimations given by the corpus. 
+        """
+        return float(ngrams((x,y))) / float(ngrams(x)) 
 
     def train(self, corpus):
         self.ngrams = self.count_ngrams(corpus)
@@ -28,20 +59,20 @@ class MarkovChain(PoemEngine):
 
     def count_ngrams(self, corpus):
         """
-        Make ngrams from a corpus.
+        Make n-grams from a corpus.
         """
 
-        ngrams = Counter()
+        n_grams = Counter()
 
         # Add each ngram for n in {1..N} to the counter
         for n in range(1, self.N + 1):
-            self.__count_ngrams(n, ngrams, corpus)
+            self.__count_ngrams(n, n_grams, corpus)
 
-        return ngrams
+        return n_grams
 
-    def __count_ngrams(self, n, ngrams, corpus):
+    def __count_ngrams(self, n, n_grams, corpus):
         """
-        For every new ngram seen, add it to the running count.
+        Iterate through the corpus and add every n-gram to the running count.
         :param n: The current value of n.
         :param ngrams: The running counter.
         :param corpus: The corpus to count.
@@ -49,26 +80,30 @@ class MarkovChain(PoemEngine):
         """
 
         for sequence in corpus:
-            sequence_length = len(sequence.augmented())
+            # Get the sequence tat is ready to be processed
+            seq = sequence.augmented()
+            sequence_length = len(seq)
+
             for token_index in range(sequence_length):
 
                 if token_index + n > sequence_length:
                     continue
 
-                # Get the current ngram
-                ngram = sequence.augmented()[token_index: token_index + n]
+                # Get the current n_gram
+                n_gram = seq[token_index: token_index + n]
 
-                # Add the ngram to the running count
-                ngrams[tuple(ngram)] += 1
+                # Add the n_gram to the running count
+                n_grams[tuple(n_gram)] += 1
 
     def print_counts(self):
-        for ngram, count in self.ngrams.items():
-            print(ngram, count)
+        for ngram, count in sorted(self.ngrams.items()):
+            print(' '.join(ngram), count)
 
 
 if __name__ == '__main__':
     corpus = Corpus('testcorpus.txt', 2)
-    mk = MarkovChain(2)
-    mk.train(corpus)
-    mk.print_counts()
+    bayes = NaiveBayes(2)
+    bayes.train(corpus)
+    bayes.print_counts()
 
+    bayes.proba(Sequence('All is all'))
