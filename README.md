@@ -18,5 +18,6 @@ This is a python project that generates poetry with neural networks. ...Or it wi
 * Gensim
 * Keras w/ tensorflow backend
 * nltk
+* git (for downloading cmu corpus)
 
 
