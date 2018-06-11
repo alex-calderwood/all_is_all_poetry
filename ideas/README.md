@@ -25,7 +25,10 @@ http://collection.eliterature.org/1/works/geniwate__generative_poetry.html
 http://interaccess.org/workshop/2017/aug/dust-deep-learning-intro-generative-poetry
 
 
+# Other
 
+*Quote from the Plotinus, THE SIX ENNEADS*
 
+http://www.sacred-texts.com/cla/plotenn/enn481.htm
 
 
