@@ -12,11 +12,11 @@ This is a python project that generates poetry with neural networks. ...Or it wi
 1.) Install dependencies: 
 
 * git (for downloading cmu corpus)
+* nltk
 
 Not required (yet...)
 * Gensim
 * Keras w/ tensorflow backend
-* nltk
 
 2.) Download the CMU pronunciation dictionary:
 
