@@ -41,7 +41,9 @@ def get_pronunciations(words):
     pronunciations = []
     for word in words:
         lowercase = word.lower()
-        pronunciations.append(pronounce.get(lowercase))
+        pronunciation = pronounce.get(lowercase)
+        pronunciation = [phoneme.strip() for phoneme in pronunciation] if pronunciation is not None else []
+        pronunciations.append(pronunciation)
 
     return pronunciations
 
