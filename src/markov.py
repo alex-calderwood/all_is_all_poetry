@@ -49,16 +49,6 @@ class NaiveBayes(PoemEngine):
 
         return p
 
-    def max_y(x):
-        max_p = 0
-        for y in Y:
-            p = p(y, x)
-            max_y = None
-            if p > max_p:
-                max_p = p
-                max_y = y
-        return max_y
-
     def p(self, y, x):
         """
         p(y|x) according to estimations given by the corpus.
