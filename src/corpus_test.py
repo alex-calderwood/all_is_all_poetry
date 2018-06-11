@@ -1,6 +1,7 @@
 import unittest
 from src.corpus import Corpus
 from src.corpus import Sequence
+from src.markov import NaiveBayes
 
 
 class TestStringMethods(unittest.TestCase):
@@ -41,6 +42,16 @@ class TestStringMethods(unittest.TestCase):
 
         self.assertEquals(sequence.list, sequence[0: len(sequence)])
 
+class TestBayes(unittest.TestCase):
+    def test_p(self):
+        corpus = Corpus('testcorpus.txt', 3)
+        bayes = NaiveBayes(3)
+        bayes.train(corpus)
+        p = bayes.p(('is',), ('all',))
+
+        self.assertEquals(1/3.0, p)
+
+        self.assertListEqual(['and', 'all', 'is', 'all'], bayes.generate().list)
 
 if __name__ == '__main__':
     unittest.main()
