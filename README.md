@@ -8,16 +8,19 @@ This is a python project that generates poetry with neural networks. ...Or it wi
 
 ## Setup
 
-1.) Download the CMU pronunciation dictionary:
 
-	cd corpus
-	./get_cmu_dict.sh
-	
-2.) Install dependencies: 
+1.) Install dependencies: 
 
+* git (for downloading cmu corpus)
+
+Not required (yet...)
 * Gensim
 * Keras w/ tensorflow backend
 * nltk
-* git (for downloading cmu corpus)
+
+2.) Download the CMU pronunciation dictionary:
+
+	cd corpus
+	./get_cmu_dict.sh
 
 
