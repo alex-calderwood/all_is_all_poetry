@@ -9,6 +9,7 @@ class Token():
         self.n = len(features)
         self.features = features
 
+
 class Sequence():
     """
     Represents a sequence of words or feature vectors. Can also be thought of as a sentence. Each sequence is augmented

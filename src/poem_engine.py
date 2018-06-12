@@ -1,12 +1,38 @@
 from collections import Counter
 from src.corpus import Corpus, Sequence, END
+from abc import ABC, abstractmethod
 
 
-class PoemEngine():
-    def train(self, corpus):
+class PoemEngine(ABC):
+
+    """
+                                _   _
+                               ( \_/ )
+                  _   _       __) _ (__
+          _   _  ( \_/ )  _  (__ (_) __)
+         ( \_/ )__) _ (__( \_/ )) _ (
+        __) _ ((__ (_) __)) _ ((_/ \_)
+       (__ (_) __)) _ ((__ (_) __)
+          ) _ (  (_/ \_)  ) _ (
+         (_/ \_)         (_/ \_)
+
+    An engine that can crank out poems.
+
+    """
+
+    @abstractmethod
+    def turn(self, corpus):
+        """
+        Crank the engine. Aka, train the engine on the given corpus.
+        """
         pass
 
+    @abstractmethod
     def generate(self):
+        """
+        Create something new.
+        :return:
+        """
         pass
 
 
@@ -20,6 +46,9 @@ class NaiveBayes(PoemEngine):
 
         self.N = N
         self.n_grams = []
+
+    def turn(self, corpus):
+        self.n_grams = self.count_ngrams(corpus)
 
     def generate(self):
 
@@ -38,17 +67,6 @@ class NaiveBayes(PoemEngine):
 
         return sequence
 
-    def prob(self, sequence):
-        """
-        Return the probability of the given sequence.
-        """
-        p = 1.0
-
-        for trigram in self.generate_n_grams(sequence, n=3):
-            p *= p(trigram[2], trigram[:-1])
-
-        return p
-
     def p(self, y, x):
         """
         p(y|x) according to estimations given by the corpus.
@@ -59,9 +77,6 @@ class NaiveBayes(PoemEngine):
         w = u + v
 
         return float(self.n_grams[w][tuple(x) + tuple(y)]) / float(self.n_grams[u][x])
-
-    def train(self, corpus):
-        self.n_grams = self.count_ngrams(corpus)
 
     def count_ngrams(self, corpus):
         """
@@ -114,9 +129,19 @@ class NaiveBayes(PoemEngine):
 
 
 if __name__ == '__main__':
+    """
+    Example usage.
+    """
+    # Read in the test corpus.
     corpus = Corpus('testcorpus.txt', 3)
-    bayes = NaiveBayes(3)
-    bayes.train(corpus)
-    bayes.print_counts()
 
-    print(bayes.generate())
+    # Instantiate a naive bayes engine
+    engine = NaiveBayes(3)
+
+    # Give it a few cranks on the corpus
+    engine.turn(corpus)
+    engine.print_counts()
+
+    # Generate new text
+    new_line = engine.generate()
+    print(new_line)

@@ -1,7 +1,7 @@
 import unittest
 from src.corpus import Corpus
 from src.corpus import Sequence
-from src.markov import NaiveBayes
+from src.poem_engine import NaiveBayes
 
 
 class TestStringMethods(unittest.TestCase):
@@ -10,9 +10,9 @@ class TestStringMethods(unittest.TestCase):
         corpus = Corpus('testcorpus.txt', prefix_padding_size=2)
 
         assert([s.augmented() for s in corpus] == [
-            ['<PRE-2>', '<PRE-1>', 'and', 'all', 'is', 'all', '<END>'],
-            ['<PRE-2>', '<PRE-1>', 'and', 'each', 'is', 'all', '<END>'],
-            ['<PRE-2>', '<PRE-1>', 'and', 'infinite', 'the', 'glory', '<END>']
+            ['~P-2~', '~P-1~', 'and', 'all', 'is', 'all', '~END~'],
+            ['~P-2~', '~P-1~', 'and', 'each', 'is', 'all', '~END~'],
+            ['~P-2~', '~P-1~', 'and', 'infinite', 'the', 'glory', '~END~']
         ])
 
         assert ([str(s) for s in corpus] == [
@@ -24,9 +24,9 @@ class TestStringMethods(unittest.TestCase):
         corpus = Corpus('testcorpus.txt')
 
         assert ([s.augmented() for s in corpus] == [
-            ['and', 'all', 'is', 'all', '<END>'],
-            ['and', 'each', 'is', 'all', '<END>'],
-            ['and', 'infinite', 'the', 'glory', '<END>']
+            ['and', 'all', 'is', 'all', '~END~'],
+            ['and', 'each', 'is', 'all', '~END~'],
+            ['and', 'infinite', 'the', 'glory', '~END~']
         ])
 
     def test_get(self):
@@ -42,16 +42,18 @@ class TestStringMethods(unittest.TestCase):
 
         self.assertEquals(sequence.list, sequence[0: len(sequence)])
 
+
 class TestBayes(unittest.TestCase):
     def test_p(self):
         corpus = Corpus('testcorpus.txt', 3)
         bayes = NaiveBayes(3)
-        bayes.train(corpus)
+        bayes.turn(corpus)
         p = bayes.p(('is',), ('all',))
 
         self.assertEquals(1/3.0, p)
 
         self.assertListEqual(['and', 'all', 'is', 'all'], bayes.generate().list)
+
 
 if __name__ == '__main__':
     unittest.main()

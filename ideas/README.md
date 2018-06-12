@@ -1,4 +1,4 @@
-# Directory
+# The Information
 
 Here are a few different surveys and introductions to the field of generative poetry that I've found useful.
 
@@ -31,4 +31,17 @@ http://interaccess.org/workshop/2017/aug/dust-deep-learning-intro-generative-poe
 
 http://www.sacred-texts.com/cla/plotenn/enn481.htm
 
+*Gears ASCII art from* 
 
+https://groups.google.com/forum/#!topic/alt.ascii-art/kgiB6eu0Gy0
+
+                                _   _
+                               ( \_/ )
+                  _   _       __) _ (__
+          _   _  ( \_/ )  _  (__ (_) __)
+         ( \_/ )__) _ (__( \_/ )) _ (
+        __) _ ((__ (_) __)) _ ((_/ \_)
+       (__ (_) __)) _ ((__ (_) __)
+          ) _ (  (_/ \_)  ) _ (
+         (_/ \_)         (_/ \_)
+         
