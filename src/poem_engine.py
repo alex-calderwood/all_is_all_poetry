@@ -1,5 +1,5 @@
 from collections import Counter
-from src.corpus import Corpus, Sequence, END
+from src.corpus import NgramCorpus, Sequence, END
 from abc import ABC, abstractmethod
 
 
@@ -115,7 +115,7 @@ if __name__ == '__main__':
     """
 
     # Read in the test corpus.
-    corpus = Corpus('../corpus/testcorpus.txt', 3)
+    corpus = NgramCorpus('../corpus/testcorpus.txt', 3)
 
     # Instantiate a naive bayes engine
     engine = NaiveBayes(3)

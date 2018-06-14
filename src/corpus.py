@@ -1,6 +1,15 @@
 # Written by Alex Calderwood on June 6th, 2018
 
 from collections import Counter
+from abc import abstractmethod
+
+from gensim.corpora import Dictionary
+import logging
+from gensim.models import Word2Vec
+
+
+# TUrn on the logger for gensim
+# logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 END = '~END~'
 PREFIX = '~P-{}~'
@@ -55,19 +64,15 @@ class Corpus():
         self.N = N
         self.n_grams = None
 
+
         with open(filename, 'r') as f:
             self._sequences_ = [Sequence(line.strip().split(' '), N) for line in f.readlines()]
 
 
     @staticmethod
-    def from_file(filename, N=0):
-        # TODO
-        pass
-
-    @staticmethod
     def from_df(dataframe):
         # TODO
-        pass
+        raise NotImplementedError
 
     def __iter__(self):
         return iter(self._sequences_)
@@ -81,6 +86,23 @@ class Corpus():
     def __str__(self):
         return str(self._sequences_)
 
+    @abstractmethod
+    def preporcessed(self):
+        raise NotImplementedError
+
+    @staticmethod
+    def generate_ngrams(sequence, n=2):
+        sequence_length = len(sequence)
+        for token_index in range(sequence_length):
+            if token_index + n > sequence_length:
+                return
+
+            # Yield the current n_gram
+            yield sequence[token_index: token_index + n]
+
+
+class NgramCorpus(Corpus):
+
     def preprocessed(self):
         """
         Should be True if self.count_ngrams() has been called.
@@ -92,6 +114,13 @@ class Corpus():
                                'Must call Corpus.count_ngrams() first.')
 
         return self.n_grams is not None
+
+
+    @staticmethod
+    def from_file(filename, N=0):
+        corpus = NgramCorpus()
+
+
 
     def p(self, y, x):
         """
@@ -118,7 +147,7 @@ class Corpus():
 
         # Add each ngram for n in {1..N} to the counter
         for n in range(1, self.N + 1):
-            self.n_grams.append(Corpus._count_ngrams_(n, self))
+            self.n_grams.append(NgramCorpus._count_ngrams_(n, self))
 
     @staticmethod
     def _count_ngrams_(n, corpus):
@@ -138,28 +167,17 @@ class Corpus():
 
         return n_grams
 
-
-    @staticmethod
-    def generate_ngrams(sequence, n=2):
-        sequence_length = len(sequence)
-        for token_index in range(sequence_length):
-            if token_index + n > sequence_length:
-                return
-
-            # Yield the current n_gram
-            yield sequence[token_index: token_index + n]
-
     def print_counts(self):
 
         self.preprocessed()
 
         for n in range(1, self.N + 1):
-            print(self.name_grams(n))
+            print(self._name_grams_(n))
             for ngram, count in sorted(self.n_grams[n].items(), reverse=True):
                 print(ngram, count)
 
     @staticmethod
-    def name_grams(n):
+    def _name_grams_(n):
         if n == 0:
             return 'none-grams'
         elif n == 1:
@@ -170,3 +188,24 @@ class Corpus():
             return 'trigrams'
 
         return '{}-grams'.format(n)
+
+
+class VectorSpace():
+    """
+    Gensim located https://radimrehurek.com/gensim/models/word2vec.html
+    """
+
+    def __init__(self, corpus):
+
+        self.model = Word2Vec(corpus, size=3, sg=1, window=3, min_count=0, workers=10)
+        print(self.model.vocabulary)
+
+    def vector(self, word):
+
+        return self.model.wv[word]
+
+
+if __name__ == '__main__':
+    testcorpus = '../corpus/testcorpus.txt'
+    space = VectorSpace(Corpus(testcorpus))
+    print(space.vector('all'))
