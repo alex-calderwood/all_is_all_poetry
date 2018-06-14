@@ -58,6 +58,9 @@ http://collection.eliterature.org/1/works/geniwate__generative_poetry.html
 
 http://interaccess.org/workshop/2017/aug/dust-deep-learning-intro-generative-poetry
 
+*Beyond Narrative Description: Generating Poetry from Images by Multi-Adversarial Training*
+
+https://arxiv.org/abs/1804.08473
 
 # Other
 
