@@ -23,7 +23,7 @@ class PoemEngine(ABC):
     @abstractmethod
     def turn(self, corpus):
         """
-        Crank the engine. Aka, train the engine on the given corpus.
+        Turn the gears, crank the engine. Aka, train the engine on the given corpus.
         """
         pass
 
@@ -31,12 +31,30 @@ class PoemEngine(ABC):
     def generate(self):
         """
         Create something new.
-        :return:
+        :return: a new Sequence() object.
+        """
+        pass
+
+
+class Grammar():
+    def check(self):
+        pass
+
+
+class PoemCritic(ABC):
+
+    @abstractmethod
+    def judge(self):
+        """
+        :return: a score between 0 and 1
         """
         pass
 
 
 class NaiveBayes(PoemEngine):
+
+    # Maximum number of words to generate in a single call to NaiveBayes.generate()
+    MAX_ITER = 100
     
     def __init__(self, N):
         """
@@ -45,20 +63,30 @@ class NaiveBayes(PoemEngine):
         """
 
         self.N = N
-        self.n_grams = []
+        self.corpus = None
 
     def turn(self, corpus):
-        self.n_grams = self.count_ngrams(corpus)
+        self.corpus = corpus
+
+        if self.corpus.N < 1:
+            raise RuntimeError('Cannot compute NaiveBayes without N >= 1.')
+
+        if self.N > corpus.N:
+            raise RuntimeError('Cannot compute NaiveBayes with n = {} with corpus of smaller n (= {})'.format(self.N, corpus.N))
+
+        self.corpus.count_ngrams()
 
     def generate(self):
 
-        # Initialize the sequence
+        if self.corpus == None:
+            raise RuntimeError('Error. Method PoemEngine.generate() cannot be called before PoemEngine.turn(corpus)')
+
         sequence = Sequence(prefix_size=self.N - 1)
 
         prior = tuple(sequence.prefix)
         index = 0
-        while index < 100:
-            token = max(self.n_grams[1], key=lambda y: self.p(y, prior))[0]
+        while index < NaiveBayes.MAX_ITER:
+            token = max(self.corpus.n_grams[1], key=lambda y: self.corpus.p(y, prior))[0]
             if token == END:
                 break
             sequence.append(token)
@@ -67,80 +95,34 @@ class NaiveBayes(PoemEngine):
 
         return sequence
 
-    def p(self, y, x):
-        """
-        p(y|x) according to estimations given by the corpus.
-        :return conditional probability of y given x
-        """
-        u = len(x)
-        v = len(y)
-        w = u + v
 
-        return float(self.n_grams[w][tuple(x) + tuple(y)]) / float(self.n_grams[u][x])
+class SimpleNet(PoemEngine):
 
-    def count_ngrams(self, corpus):
-        """
-        Make n-grams from a corpus.
-        """
 
-        # Initialize n_grams, appending an empty '0'-gram dictionary
-        n_grams = [{}]
+    def turn(self, corpus):
+        pass
 
-        # Add each ngram for n in {1..N} to the counter
-        for n in range(1, self.N + 1):
-            n_grams.append(self.__count_ngrams(n, corpus))
+    def generate(self):
+        pass
 
-        return n_grams
-
-    @staticmethod
-    def generate_n_grams(sequence, n=2):
-        sequence_length = len(sequence)
-        for token_index in range(sequence_length):
-            if token_index + n > sequence_length:
-                return
-
-            # Yield the current n_gram
-            yield sequence[token_index: token_index + n]
-
-    @staticmethod
-    def __count_ngrams(n, corpus):
-        """
-        Iterate through the corpus and add every n-gram to the running count.
-        :param n: The current value of n.
-        :param corpus: The corpus to count.
-        :return: The counts of all n-grams.
-        """
-        n_grams = Counter()
-
-        for sequence in corpus:
-            seq = sequence.augmented()
-
-            for n_gram in NaiveBayes.generate_n_grams(seq, n):
-                n_grams[tuple(n_gram)] += 1
-
-        return n_grams
-
-    def print_counts(self):
-
-        for n in range(1, self.N + 1):
-            print('{}-grams'.format(n))
-            for ngram, count in sorted(self.n_grams[n].items(), reverse=True):
-                print(ngram, count)
+    def __init__(self):
+        pass
 
 
 if __name__ == '__main__':
     """
     Example usage.
     """
+
     # Read in the test corpus.
-    corpus = Corpus('testcorpus.txt', 3)
+    corpus = Corpus('../corpus/testcorpus.txt', 3)
 
     # Instantiate a naive bayes engine
     engine = NaiveBayes(3)
 
     # Give it a few cranks on the corpus
     engine.turn(corpus)
-    engine.print_counts()
+    corpus.print_counts()
 
     # Generate new text
     new_line = engine.generate()
