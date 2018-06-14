@@ -10,12 +10,15 @@ This is a python project that generates poetry with neural networks. ...Or it wi
 
 
 1.) Install dependencies: 
-
-* git (for downloading cmu corpus)
 * nltk
+* [gensim](https://radimrehurek.com/gensim/install.html)
 
-Not required (yet...)
-* Gensim
+    easy_install -U gensim
+    
+    or
+    
+    pip install --upgrade gensim
+    
 * Keras w/ tensorflow backend
 
 2.) Download the CMU pronunciation dictionary:
