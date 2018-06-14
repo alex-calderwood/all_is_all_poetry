@@ -27,6 +27,8 @@ This is a python project that generates poetry with neural networks. ...Or it wi
 
 # To do
 
+Finish reading 'Beyond Narrative Description: Generating Poetry from Images by Multi-Adversarial Training'
+
 Create more corpus entry points. Be able to generate a corpus from:
 * Tweets (using tweepy)
 * CONLL Formatted Data
