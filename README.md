@@ -57,11 +57,7 @@ http://collection.eliterature.org/1/works/geniwate__generative_poetry.html
 
 http://interaccess.org/workshop/2017/aug/dust-deep-learning-intro-generative-poetry
 
-*Beyond Narrative Description: Generating Poetry from Images by Multi-Adversarial Training*
-
-https://arxiv.org/abs/1804.08473
-
-# Academic Sources
+# Academic Resources
 
 *Journal of Mathematics and the Arts - A taxonomy of generative poetry techniques*
 
@@ -72,6 +68,12 @@ http://archive.bridgesmathart.org/2016/bridges2016-195.pdf
 *Generating Text with Recurrant Neural Networks*
 
 https://www.cs.utoronto.ca/~ilya/pubs/2011/LANG-RNN.pdf
+
+*Beyond Narrative Description: Generating Poetry from Images by Multi-Adversarial Training*
+
+https://arxiv.org/abs/1804.08473
+
+	This one is really outstanding. One of the most interesting papers I've read about deep learning. 
 
 # Coding Tutorials
 
