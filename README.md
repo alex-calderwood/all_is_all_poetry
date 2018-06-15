@@ -67,6 +67,18 @@ http://interaccess.org/workshop/2017/aug/dust-deep-learning-intro-generative-poe
 
 https://arxiv.org/abs/1804.08473
 
+* Generating Text with Recurrant Neural Networks *
+
+https://www.cs.utoronto.ca/~ilya/pubs/2011/LANG-RNN.pdf
+
+
+# Coding Tutorials
+
+* Text Generation With LSTM Recurrent Neural Networks in Python with Keras *
+
+https://machinelearningmastery.com/text-generation-lstm-recurrent-neural-networks-python-keras/
+
+
 # Other
 
 *Quote from the Plotinus, THE SIX ENNEADS*
