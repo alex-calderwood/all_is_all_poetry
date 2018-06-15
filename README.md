@@ -49,12 +49,6 @@ https://twitter.com/pentametron?lang=en
 
 https://github.com/karpathy/char-rn
 
-*Journal of Mathematics and the Arts - A taxonomy of generative poetry techniques*
-
-https://www.tandfonline.com/doi/abs/10.1080/17513472.2017.1373561?journalCode=tmaa20
-
-http://archive.bridgesmathart.org/2016/bridges2016-195.pdf
-
 *When you Reach Kyoto - Brian Kim Stefans*
 
 http://collection.eliterature.org/1/works/geniwate__generative_poetry.html
@@ -67,14 +61,21 @@ http://interaccess.org/workshop/2017/aug/dust-deep-learning-intro-generative-poe
 
 https://arxiv.org/abs/1804.08473
 
-* Generating Text with Recurrant Neural Networks *
+# Academic Sources
+
+*Journal of Mathematics and the Arts - A taxonomy of generative poetry techniques*
+
+https://www.tandfonline.com/doi/abs/10.1080/17513472.2017.1373561?journalCode=tmaa20
+
+http://archive.bridgesmathart.org/2016/bridges2016-195.pdf
+
+*Generating Text with Recurrant Neural Networks*
 
 https://www.cs.utoronto.ca/~ilya/pubs/2011/LANG-RNN.pdf
 
-
 # Coding Tutorials
 
-* Text Generation With LSTM Recurrent Neural Networks in Python with Keras *
+*Text Generation With LSTM Recurrent Neural Networks in Python with Keras*
 
 https://machinelearningmastery.com/text-generation-lstm-recurrent-neural-networks-python-keras/
 
