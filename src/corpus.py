@@ -6,6 +6,7 @@ from abc import abstractmethod
 from gensim.corpora import Dictionary
 import logging
 from gensim.models import Word2Vec
+import codecs
 
 
 # TUrn on the logger for gensim
@@ -60,13 +61,18 @@ class Sequence():
 
 
 class Corpus():
-    def __init__(self, filename, N=0):
+    def __init__(self, filename, N=0, codec=None):
         self.N = N
         self.n_grams = None
 
+        if not codec:
+            file = open(filename, 'r')
+        else:
+            file = codecs.open(filename, 'r', codec)
 
-        with open(filename, 'r') as f:
-            self._sequences_ = [Sequence(line.strip().split(' '), N) for line in f.readlines()]
+        self._sequences_ = [Sequence(line.strip().split(' '), N) for line in file.readlines()]
+
+        file.close()
 
 
     @staticmethod
@@ -197,7 +203,7 @@ class VectorSpace():
 
     def __init__(self, corpus):
 
-        self.model = Word2Vec(corpus, size=3, sg=1, window=3, min_count=0, workers=10)
+        self.model = Word2Vec(corpus, size=200, sg=1, window=3, min_count=5, workers=10)
         print(self.model.vocabulary)
 
     def vector(self, word):
@@ -206,6 +212,9 @@ class VectorSpace():
 
 
 if __name__ == '__main__':
+    '''
+    Example usage.
+    '''
     testcorpus = '../corpus/testcorpus.txt'
     space = VectorSpace(Corpus(testcorpus))
     print(space.vector('all'))
