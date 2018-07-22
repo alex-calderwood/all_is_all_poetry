@@ -7,13 +7,15 @@ from gensim.corpora import Dictionary
 import logging
 from gensim.models import Word2Vec
 import codecs
-
+from nltk.tokenize import word_tokenize
 
 # TUrn on the logger for gensim
 # logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 END = '~END~'
 PREFIX = '~P-{}~'
+
+VERBOSE = False
 
 class Token():
 
@@ -60,20 +62,27 @@ class Sequence():
         return [PREFIX.format(i) for i in reversed(range(1, n + 1))]
 
 
-class Corpus():
-    def __init__(self, filename, N=0, codec=None):
+class Corpus:
+    def __init__(self, filename, N=0, codec=None, tokenize=word_tokenize):
         self.N = N
         self.n_grams = None
+        self.tokenize = tokenize
 
+        # Open the file
         if not codec:
             file = open(filename, 'r')
         else:
             file = codecs.open(filename, 'r', codec)
 
-        self._sequences_ = [Sequence(line.strip().split(' '), N) for line in file.readlines()]
+        print('Tokenizing with tokenizer {}...'.format(tokenize))
+        self._sequences = []
+        for line in file.readlines():
+            tokenized = self.tokenize(line)
+            sequence = Sequence(tokenized, N)
+            self._sequences.append(sequence)
 
         file.close()
-
+        print('Corpus created from', file)
 
     @staticmethod
     def from_df(dataframe):
@@ -81,16 +90,16 @@ class Corpus():
         raise NotImplementedError
 
     def __iter__(self):
-        return iter(self._sequences_)
+        return iter(self._sequences)
 
     def __getitem__(self, val):
-        return self._sequences_[val]
+        return self._sequences[val]
 
     def set_sequences(self, sequences):
-        self._sequences_ = sequences
+        self._sequences = sequences
 
     def __str__(self):
-        return str(self._sequences_)
+        return str(self._sequences)
 
     @abstractmethod
     def preporcessed(self):
@@ -121,12 +130,9 @@ class NgramCorpus(Corpus):
 
         return self.n_grams is not None
 
-
     @staticmethod
     def from_file(filename, N=0):
         corpus = NgramCorpus()
-
-
 
     def p(self, y, x):
         """
@@ -196,7 +202,7 @@ class NgramCorpus(Corpus):
         return '{}-grams'.format(n)
 
 
-class VectorSpace():
+class VectorSpace:
     """
     Gensim located https://radimrehurek.com/gensim/models/word2vec.html
     """

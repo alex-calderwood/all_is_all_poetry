@@ -1,26 +1,32 @@
 from corpus import VectorSpace, Corpus
 import pickle
 import os.path
+from nltk.tokenize import word_tokenize
+import argparse
 
-g_pic = 'gandhi_pickle.dat'
+PICKLE = 'gandhi_pickle.dat'
 
-def embed_gandhi_into_vector_space():
-    ''''
-    Read all of the works of gandhi and embed him into a vector space
-    Must first run scrape_gandhi.py according to its usage directions. 
-    '''
 
-    print('Embedding Gandhi into vector space...')
+def embed_corpus_into_vector_space(file, save_to=None):
+    """'
+    Read all of the works of the given corpus and embed it into a vector space. Serialize the vector space into a
+    """
 
-    space = VectorSpace(Corpus('../corpus/gandhi/gandhi.txt', codec='iso-8859-1'))
-    pickle.dump(space, open(g_pic, 'wb'))
+    print('Embedding corpus into vector space...')
+
+    corpus = Corpus(file, codec='iso-8859-1')
+
+    space = VectorSpace(corpus)
+
+    if save_to:
+        pickle.dump(space, open(save_to, 'wb'))
 
     print(space.vector('all'))
 
 
 def translate(string, model):
 
-    string = string.split(' ')
+    string = word_tokenize(string)
 
     new_string = ''
     for word in string:
@@ -41,14 +47,29 @@ def translate(string, model):
 
 
 if __name__ == '__main__':
-    # Check if the preloaded gandhi vector space model exists, or create one otherwise
-    if not os.path.isfile(g_pic):
-        embed_gandhi_into_vector_space()
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('phrase', help='The phrase to translate.')
+    args = parser.parse_args()
+
+    file = '../corpus/gandhi/gandhi.txt'
+    # Check if the pre-loaded gandhi vector space model exists, or create one otherwise
+    if not os.path.isfile(PICKLE):
+        embed_corpus_into_vector_space(file, save_to=PICKLE)
 
     # Load the vector space pickle
-    vector_space = pickle.load(open(g_pic, 'rb')).model
+    vector_space = pickle.load(open(PICKLE, 'rb')).model
 
-    # a = vector_space.wv.most_similar(positive=['woman', 'king'], negative=['man'])
-
-    gandhi_speak = translate('I think that would qualify as not smart , but genius .... and a very stable genius at that !', vector_space)
+    gandhi_speak = translate(args.phrase, vector_space)
     print(gandhi_speak)
+
+    # print(gandhi_speak)
+    # p = None
+    # p = ['home']
+    # n = None
+    # n = ['building']
+
+    # sim = vector_space.wv.most_similar(positive=p, negative=n)
+    # print(sim)
+
+
