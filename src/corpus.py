@@ -2,14 +2,14 @@
 
 from collections import Counter
 from abc import abstractmethod
-
 from gensim.corpora import Dictionary
-import logging
 from gensim.models import Word2Vec
 import codecs
 from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
 
-# TUrn on the logger for gensim
+# Turn on the logger for gensim
+# import logging
 # logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 END = '~END~'
@@ -17,14 +17,18 @@ PREFIX = '~P-{}~'
 
 VERBOSE = False
 
-class Token():
+stoplist = stopwords.words('english')
+punctuation = ['.', ',', '-', '?', '!', '\\', '*', '(', ')', '$']
+
+
+class Token:
 
     def __init__(self, features):
         self.n = len(features)
         self.features = features
 
 
-class Sequence():
+class Sequence:
     """
     Represents a sequence of words or feature vectors. Can also be thought of as a sentence. Each sequence is augmented
     by extra tokens on the beginning and end for use by a prediction algorithm.
@@ -62,8 +66,23 @@ class Sequence():
         return [PREFIX.format(i) for i in reversed(range(1, n + 1))]
 
 
+def tokenize(sequence):
+    return word_tokenize(sequence)
+
+
+def untokenize(sequence):
+    sent = ''
+    for i, token in enumerate(sequence):
+        if i == 0 or token in punctuation:
+            sent += token
+        else:
+            sent += ' ' + token
+    return sent
+
+
 class Corpus:
-    def __init__(self, filename, N=0, codec=None, tokenize=word_tokenize):
+
+    def __init__(self, filename, N=0, codec=None, tokenize=tokenize):
         self.N = N
         self.n_grams = None
         self.tokenize = tokenize
@@ -115,6 +134,10 @@ class Corpus:
             # Yield the current n_gram
             yield sequence[token_index: token_index + n]
 
+    @staticmethod
+    def is_stopword(word):
+        l = word.lower()
+        return l in stoplist or l in punctuation
 
 class NgramCorpus(Corpus):
 

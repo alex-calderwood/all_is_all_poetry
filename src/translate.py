@@ -1,7 +1,6 @@
-from corpus import VectorSpace, Corpus
+from corpus import VectorSpace, Corpus, tokenize, untokenize
 import pickle
 import os.path
-from nltk.tokenize import word_tokenize
 import argparse
 
 PICKLE = 'gandhi_pickle.dat'
@@ -26,9 +25,8 @@ def embed_corpus_into_vector_space(file, save_to=None):
 
 def translate(string, model):
 
-    string = word_tokenize(string)
-
-    new_string = ''
+    string = tokenize(string)
+    seq = []
     for word in string:
 
         similar_words = []
@@ -38,17 +36,25 @@ def translate(string, model):
         except KeyError:
             pass
 
-        if len(similar_words) != 0:
-            new_string += ' ' + similar_words[0][0]
+        if Corpus.is_stopword(word) or len(similar_words) == 0:
+            new = word
         else:
-            new_string += ' ' + word
+            new = similar_words[0][0]
 
-    return new_string
+        seq.append(new)
+
+    return untokenize(seq)
+
+
+def use(name=None):
+    return '''python gandhi.py \"And all is all and each all, and infinite the glory.\"
+    Result: And all is all and each all, and limitless the lustre.
+           '''
 
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(usage=use())
     parser.add_argument('phrase', help='The phrase to translate.')
     args = parser.parse_args()
 
@@ -60,16 +66,5 @@ if __name__ == '__main__':
     # Load the vector space pickle
     vector_space = pickle.load(open(PICKLE, 'rb')).model
 
-    gandhi_speak = translate(args.phrase, vector_space)
-    print(gandhi_speak)
-
-    # print(gandhi_speak)
-    # p = None
-    # p = ['home']
-    # n = None
-    # n = ['building']
-
-    # sim = vector_space.wv.most_similar(positive=p, negative=n)
-    # print(sim)
-
-
+    translated = translate(args.phrase, vector_space)
+    print(translated)

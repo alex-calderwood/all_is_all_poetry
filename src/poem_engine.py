@@ -98,7 +98,6 @@ class NaiveBayes(PoemEngine):
 
 class SimpleNet(PoemEngine):
 
-
     def turn(self, corpus):
         pass
 

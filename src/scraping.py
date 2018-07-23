@@ -7,6 +7,24 @@ from collections import Counter
 import os
 import utils
 
+""""
+Downloads, cleans and saves the complete works of Gandhi. 
+
+Requires
+
+[pdftotext](https://www.xpdfreader.com/pdftotext-man.html)
+
+Usage: 
+
+1.) Before running, create the folders:
+    ../corpus/gandhi/text/ 
+    ../corpus/gandhi/pdf/ 
+
+2.) Run:
+
+     python scraping.py
+"""
+
 verbose = False
 
 base_url = 'http://www.gandhiashramsevagram.org/gandhi-literature/mahatma-gandhi-collected-works-volume-{}.pdf'
@@ -47,13 +65,17 @@ def pdf_to_text():
         print(result)
 
 
-class CorpusCleaner():
+class CorpusCleaner:
 
     def __init__(self):
         self.cleaners = []
         self.line_cleaners = []
 
     def add(self, cleaner):
+        """
+        Add a global cleaner to the list of cleaners to use. Global cleaners use regex on the entire text body.
+        :param cleaner: a compiled regular expression to be matched and replaced with ''.
+        """
         self.cleaners.append(cleaner)
 
     def addline(self, cleaner):
@@ -65,6 +87,13 @@ class CorpusCleaner():
 
     @staticmethod
     def make_simple_line_cleaner(pattern, type):
+        """
+        Construct a function that replaces text from a single line of input.
+        :param pattern: the un-compiled regex string to match and remove
+        :param type: the type of regex operation to use: match, fullmatch, or search
+        :return: the cleaning function
+        """
+
         pattern = re.compile(pattern)
 
         def cleaner(text, pattern=pattern):
@@ -97,6 +126,10 @@ class CorpusCleaner():
         return re.compile(br + pattern + br + end)
 
     def clean_text(self, text):
+        """
+        Run the cleaner on the given document.
+        :return the cleaned text
+        """
 
         if verbose:
             print('Cleaning...')
@@ -117,8 +150,6 @@ class CorpusCleaner():
         clean_text = ''
         deletions = Counter()
         for line in text:
-
-            # print('line', line, end="")
             for cleaner in self.line_cleaners:
                 line = cleaner(line)
 
@@ -137,12 +168,16 @@ class CorpusCleaner():
 
 
 def make_gandhi_cleaner(volume):
+
+    # Construct a gandhi-specific corpus cleaner
     cleaner = CorpusCleaner()
 
+    # Add the global cleaners
     cleaner.add(CorpusCleaner._re_line('[0-9]*[\n\s]*THE COLLECTED WORKS OF.*[\n\s]*', end='\f'))  # collected works
     cleaner.add(re.compile('VOL\.\s*{}.*[\n\s]*[0-9]*[\n\s]*\f'.format(volume)))  # vol page break
     cleaner.add(re.compile('\n[a-z|0-9].*[\n\s]+'))  # headers and footers
 
+    # Add the line cleaners
     simple_line = CorpusCleaner.make_simple_line_cleaner
     cleaner.addline(simple_line('.*photostat.*', 'search')) # description of text source
     cleaner.addline(simple_line('[A-Z0-9 \_,\.\\\-]+', 'fullmatch'))  # only uppercase and numbers
@@ -152,6 +187,9 @@ def make_gandhi_cleaner(volume):
 
 
 def gandhi_clean():
+    """
+    Clean each Gandhi file and save seperately.
+    """
 
     total = 99
     for i in range(1, total):
@@ -173,7 +211,9 @@ def gandhi_clean():
 
 
 def one_big_gandhi():
-    # put everything into one big clean file
+    """
+    Put everything into one big clean file.
+    """
 
     total = 99
 
