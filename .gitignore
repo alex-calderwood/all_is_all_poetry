@@ -1,4 +1,5 @@
 corpus/cmudict/
+corpus/gandhi/
 .idea
 src/__pycache__/
 
