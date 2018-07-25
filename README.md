@@ -76,6 +76,8 @@ https://arxiv.org/abs/1804.08473
 
 	This one is really outstanding. One of the most interesting papers I've read about deep learning. 
 
+https://www.frontiersin.org/articles/10.3389/fdigh.2018.00005/full
+
 # Coding Tutorials
 
 *Text Generation With LSTM Recurrent Neural Networks in Python with Keras*
