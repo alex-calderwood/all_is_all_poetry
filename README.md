@@ -28,15 +28,10 @@ This is a python project that generates poetry with neural networks. ...Or it wi
 
 # To do
 
-Finish reading 'Beyond Narrative Description: Generating Poetry from Images by Multi-Adversarial Training'
+* Obtain or create a large poetry corpus.
+* Implement constraint satisfaction.
+* Think about constraint induction?
 
-Find the corpus used for that paper ^. Start thinking about other ways to create a corpus (can we use topic modeling or just vector similarity). Basically we want to have some sort of corous of any type of text and poems corresponding to each text. What are some good ideas?? What domain has obvious poem matches? Maybe we don't even want to do anything that compllicated at first... like let's start with just a few very simple phrases and be able to generate poems from them. News articles might be fun. A better way to do senence simplification.
-
-
-Create more corpus entry points. Be able to generate a corpus from:
-* Tweets (using tweepy)
-* CONLL Formatted Data
-* Sentences seperated by new lines. (Done)
 
 # The Information
 
@@ -58,7 +53,7 @@ http://collection.eliterature.org/1/works/geniwate__generative_poetry.html
 
 http://interaccess.org/workshop/2017/aug/dust-deep-learning-intro-generative-poetry
 
-# Academic Resources
+## Academic Resources
 
 *Journal of Mathematics and the Arts - A taxonomy of generative poetry techniques*
 
@@ -78,14 +73,14 @@ https://arxiv.org/abs/1804.08473
 
 https://www.frontiersin.org/articles/10.3389/fdigh.2018.00005/full
 
-# Coding Tutorials
+## Coding Resources
 
 *Text Generation With LSTM Recurrent Neural Networks in Python with Keras*
 
 https://machinelearningmastery.com/text-generation-lstm-recurrent-neural-networks-python-keras/
 
 
-# Other
+## Other
 
 *Quote from the Plotinus, THE SIX ENNEADS*
 

@@ -2,6 +2,7 @@ corpus/cmudict/
 corpus/gandhi/
 .idea
 src/__pycache__/
+data/
 
 .ipynb_checkpoints/
 *.pytest_cache/

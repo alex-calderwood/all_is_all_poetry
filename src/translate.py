@@ -2,8 +2,9 @@ from corpus import VectorSpace, Corpus, tokenize, untokenize
 import pickle
 import os.path
 import argparse
+from pronounce import say
 
-PICKLE = 'gandhi_pickle.dat'
+PICKLE = '../data/gandhi_pickle.dat'
 
 
 def embed_corpus_into_vector_space(file, save_to=None):
@@ -68,3 +69,4 @@ if __name__ == '__main__':
 
     translated = translate(args.phrase, vector_space)
     print(translated)
+    say(translated)

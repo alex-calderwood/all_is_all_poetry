@@ -1,11 +1,10 @@
 import re, codecs
 import requests
-import time
-import sys
 import subprocess
 from collections import Counter
 import os
 import utils
+from bs4 import BeautifulSoup
 
 """"
 Downloads, cleans and saves the complete works of Gandhi. 
@@ -36,7 +35,6 @@ gandhi = '../corpus/gandhi/gandhi.txt'
 
 def donwload_pdf(url, save_name):
     response = requests.get(url)
-
     with open(save_name, 'wb') as f:
         f.write(response.content)
 
@@ -63,6 +61,13 @@ def pdf_to_text():
         # Convert the ith pdf into a txt file and save it in the txt/ directory
         result = subprocess.run(['pdftotext', base_gandhi_file.format(i), gandhi_text_file])
         print(result)
+
+
+class Scraper:
+
+    def __init__(self):
+        soup = BeautifulSoup('html')
+
 
 
 class CorpusCleaner:
@@ -118,7 +123,7 @@ class CorpusCleaner:
             print('---')
 
     @staticmethod
-    def _re_line(pattern, br='[\n]+[\s]*', end=''):
+    def re_line(pattern, br='[\n]+[\s]*', end=''):
         """
         Match: a line with all surrounding whitespace.
         """
@@ -173,7 +178,7 @@ def make_gandhi_cleaner(volume):
     cleaner = CorpusCleaner()
 
     # Add the global cleaners
-    cleaner.add(CorpusCleaner._re_line('[0-9]*[\n\s]*THE COLLECTED WORKS OF.*[\n\s]*', end='\f'))  # collected works
+    cleaner.add(CorpusCleaner.re_line('[0-9]*[\n\s]*THE COLLECTED WORKS OF.*[\n\s]*', end='\f'))  # collected works
     cleaner.add(re.compile('VOL\.\s*{}.*[\n\s]*[0-9]*[\n\s]*\f'.format(volume)))  # vol page break
     cleaner.add(re.compile('\n[a-z|0-9].*[\n\s]+'))  # headers and footers
 
