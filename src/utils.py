@@ -11,7 +11,24 @@ class Timer:
         print('Done in {:.2f}s'.format(self.end - self.start))
 
 
-def progress_bar(progress, total, message='', size=20):
+class Color:
+
+    template = '\033[38;2;{};{};{}m'
+    clear = '\033[0m'
+
+    green =(0, 175, 95)
+    red = (175, 0, 0)
+    white = (185,185,185)
+    black = (8,8,8)
+
+    def __init__(self, rgb):
+        self.prefix = Color.template.format(rgb[0], rgb[1], rgb[2])
+
+    def paint(self, string):
+        return self.prefix + string + self.clear
+
+
+def progress_bar(progress, total, message='', size=20, color=True):
     """
     Prints a progress bar. Overwrites the last progress bar written using the "\r" (carriage return) character.
     :param progress: The current progress, i.e. the number of things
@@ -30,8 +47,23 @@ def progress_bar(progress, total, message='', size=20):
     cur = int(perc * size) if progress < total else int(size)
 
     # Make the progress strings
-    complete = str(''.join('-' * cur))
+    complete = str(''.join(chr(9608) * cur))
     incomplete = str(''.join(' ' * (size - cur)))
 
+    # Get the linear interpolation between two colors at the current percentage
+    if color:
+        t = tuple(map(lambda c: int(c[0] * (1 - perc) + c[1] * perc), zip(Color.black, Color.white)))
+        c = Color(t)
+        complete = c.paint(complete)
+
     # Print the progress bar
-    print("\r" + '[' + complete + incomplete + '] {:.2f}% complete'.format(perc * 100), message, end="")
+    print("\r" + '|' + complete + incomplete + '| '    # [██████████████████████████████████████████████████]
+          '{:.2f}% complete'.format(perc * 100),                # 100.00% complete
+          message, end="")
+
+
+if __name__ == '__main__':
+
+    for i in range(101):
+        progress_bar(i, 100, size=50)
+        time.sleep(.03)
