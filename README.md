@@ -18,19 +18,13 @@ This is a python project that generates poetry with neural networks. ...Or it wi
 
 2.) Download the CMU pronunciation dictionary (requires git):
 
-	cd corpus
+	cd toolbox/corpus
 	./get_cmu_dict.sh
 
 3.) Run tests:
 
-     cd src
+     cd toolbox/src
      python corpus_test.py
-
-# To do
-
-* Obtain or create a large poetry corpus.
-* Implement constraint satisfaction.
-* Think about constraint induction?
 
 
 # The Information
