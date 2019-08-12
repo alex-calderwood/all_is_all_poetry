@@ -1,8 +1,10 @@
-corpus/cmudict/
-corpus/gandhi/
-.idea
-src/__pycache__/
-data/
+toolbox/corpus/cmudict/
+toolbox/corpus/gandhi/
+toolbox/.idea
+toolbox/src/__pycache__/
+toolbox/data/
+
+in_two_dimensions/models/
 
 .ipynb_checkpoints/
 *.pytest_cache/
