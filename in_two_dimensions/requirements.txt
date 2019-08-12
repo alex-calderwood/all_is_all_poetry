@@ -1,0 +1,4 @@
+dill
+scikit-learn
+gensim
+matplotlib
