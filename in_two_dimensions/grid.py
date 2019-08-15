@@ -227,7 +227,7 @@ def plot_along_space(w1, w2, n=25):
     return matrix
 
 
-def plot_along_space_2d(wa1, wa2, wb1, wb2, extra_exclude=[], output=None):
+def word_grid(wa1, wa2, wb1, wb2, extra_exclude=[], output=None, plot=False):
 
     w = model[wa1]
     v = model[wa2]
@@ -246,7 +246,7 @@ def plot_along_space_2d(wa1, wa2, wb1, wb2, extra_exclude=[], output=None):
     # vector_grid = vector_grid.reshape((n ** 2, model.vector_size))
     # word_grid = word_grid.reshape((n ** 2, model.vector_size))
 
-    if not output:
+    if plot:
         plt.scatter(range(n), range(n), alpha=0)
 
         for i in range(n):
@@ -257,20 +257,24 @@ def plot_along_space_2d(wa1, wa2, wb1, wb2, extra_exclude=[], output=None):
         plt.axis('off')
         # plt.set_title('interpolation', fontsize=20)
         plt.show()
-    else:
+
+    grid_string = ''
+
+    for line in word_grid:
+        grid_string += '\t\t'.join([word for word in line]) + '\n'
+
+    if output:
         with open(output, 'w') as f:
-            for line in word_grid:
-                f.write('\t\t'.join([word for word in line]) + '\n')
+            f.write(grid_string)
 
-    return vector_grid
+    return grid_string
 
-
-plot_along_space_2d(
-    'black',
-    'white',
-    'blue',
-    'green',
-    extra_exclude=['brown'],
-    output='assets/grid.txt'
-)
+# plot_along_space_2d(
+#     'black',
+#     'white',
+#     'blue',
+#     'green',
+#     extra_exclude=['brown'],
+#     output='assets/grid.txt'
+# )
 
