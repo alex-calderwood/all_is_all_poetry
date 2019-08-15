@@ -15,7 +15,7 @@ name = 'glove-wiki-gigaword-100'
 
 print('retrieving model / corpus')
 
-filename = os.path.join('./models/', name + '.pickle')
+filename = os.path.join('./assets/', name + '.pickle')
 
 if os.path.exists(filename):
     print('loading cached model')
@@ -83,7 +83,7 @@ def sample_between(a, b, n):
 
 
 def interpolate2D(a, b, c, d, n=10):
-    assert(len(a) == len(b) == len(c) == len(d))
+    assert(a.shape == b.shape == c.shape == d.shape)
     dim = len(a)
 
     # Define the interpolated values between the vectors a to b and the vectors c to d
@@ -124,18 +124,34 @@ def interpolate2D(a, b, c, d, n=10):
 # d = [1, 1]
 # interpolate2D(a, b, c, d)
 
+def similar_by_vector(vector, exclude):
+    sim_words = [word for word, _ in model.similar_by_vector(vector, topn=10)]
+
+    for word in sim_words:
+        if word not in exclude:
+            return word
+
+    return ''
+
 
 def words_between(vectors_between):
     words = [model.similar_by_vector(vec, topn=1)[0][0] for vec in vectors_between]
     return words
 
 
-def words_between2D(vector_grid):
+def words_between2D(vector_grid, exclude=[]):
+    """
+    Given an (n x m x d) grid of word vectors of dimension d, return a (n x m) matrix of their corresponding most similar words.
+    :param vector_grid: the vector grid
+    :param exclude: perform the "cheat" described here https://arxiv.org/pdf/1905.09866.pdf
+        and in the gensim most_similar function. In other words, don't allow any of these words to be in the returned grid
+    :return: the new word grid
+    """
     word_grid = []
     for i in range(vector_grid.shape[0]):
         row = []
         for j in range(vector_grid.shape[1]):
-            row.append(model.similar_by_vector(vector_grid[i][j], topn=1)[0][0])
+            row.append(similar_by_vector(vector_grid[i][j], exclude))
         word_grid.append(row)
 
     return np.array(word_grid)
@@ -211,41 +227,50 @@ def plot_along_space(w1, w2, n=25):
     return matrix
 
 
-def plot_along_space_2d(wa1, wa2, wb1, wb2):
+def plot_along_space_2d(wa1, wa2, wb1, wb2, extra_exclude=[], output=None):
 
     w = model[wa1]
     v = model[wa2]
     x = model[wb1]
     y = model[wb2]
 
+    print('plotting', wa1, wa2, wb1, wb2)
+
     # Create an (n x n x vocab_len) grid
     n = 19
     vector_grid = interpolate2D(w, v, x, y, n=n)
-    word_grid = words_between2D(vector_grid)
+    word_grid = words_between2D(vector_grid, exclude=[wa1, wa2, wb1, wb2] + extra_exclude)
 
     Y = vector_grid
 
     # vector_grid = vector_grid.reshape((n ** 2, model.vector_size))
     # word_grid = word_grid.reshape((n ** 2, model.vector_size))
 
-    plt.scatter(range(n), range(n), alpha=0)
+    if not output:
+        plt.scatter(range(n), range(n), alpha=0)
 
-    for i in range(n):
-        for j in range(n):
-            label = word_grid[i][j]
-            plt.annotate(label, xy=(i, j), xytext=(-2.5 * len(label), 0), textcoords='offset points')
+        for i in range(n):
+            for j in range(n):
+                label = word_grid[i][j]
+                plt.annotate(label, xy=(i, j), xytext=(-2.5 * len(label), 0), textcoords='offset points')
 
-    plt.axis('off')
-    # plt.set_title('interpolation', fontsize=20)
-    plt.show()
+        plt.axis('off')
+        # plt.set_title('interpolation', fontsize=20)
+        plt.show()
+    else:
+        with open(output, 'w') as f:
+            for line in word_grid:
+                f.write('\t\t'.join([word for word in line]) + '\n')
 
     return vector_grid
 
 
 plot_along_space_2d(
-    'cat',
-    'truce',
-    'cupcake',
-    'barf',
+    'black',
+    'white',
+    'blue',
+    'green',
+    extra_exclude=['brown'],
+    output='assets/grid.txt'
 )
 

@@ -1,4 +1,6 @@
+flask
 dill
+numpy
 scikit-learn
 gensim
 matplotlib

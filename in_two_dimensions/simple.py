@@ -7,7 +7,7 @@ name = 'glove-wiki-gigaword-100'
 
 print('retrieving model / corpus')
 
-filename = os.path.join('./models/', name + '.pickle')
+filename = os.path.join('./assets/', name + '.pickle')
 
 if os.path.exists(filename):
     print('loading cached model')
