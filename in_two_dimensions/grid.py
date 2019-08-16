@@ -267,7 +267,7 @@ def word_grid(wa1, wa2, wb1, wb2, extra_exclude=[], output=None, plot=False):
         with open(output, 'w') as f:
             f.write(grid_string)
 
-    return grid_string
+    return word_grid
 
 # plot_along_space_2d(
 #     'black',

@@ -6,5 +6,5 @@ app = Flask(__name__)
 def grid():
     words = [word1, word2, word3, word4] = ['word', 'another', 'yet', 'another']
     grid = word_grid(word1, word2, word3, word4)
-    # return render_template('./grid.html', **locals())
+    return render_template('grid.html', **locals())
     return grid
