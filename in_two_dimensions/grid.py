@@ -246,4 +246,6 @@ def word_grid(wa1, wa2, wb1, wb2, extra_exclude=[], output=None, plot=False):
 
     # print(coordinate_grid)
 
+    word_grid = word_grid.flatten().tolist()
+    coordinate_grid = coordinate_grid.reshape((-1, 2)).tolist()
     return word_grid, coordinate_grid
