@@ -203,7 +203,7 @@ def plot_along_space(w1, w2, n=25):
     return matrix
 
 
-def word_grid(w_up, w_down, w_left, w_right, extra_exclude=[], output=None, plot=False, n=7):
+def compose_grid(w_up, w_down, w_left, w_right, extra_exclude=[], output=None, plot=False, n=7):
 
     w = model[w_up]
     v = model[w_down]

@@ -1,12 +1,12 @@
 let words, coords;
 function setup() {
     smooth();
-    canvas = createCanvas(windowWidth, windowWidth);
+    canvas = createCanvas(windowWidth * 2, windowWidth * 2);
     textSize(14)
 }
 
 function draw() {
-    let spacing = 50;
+    let spacing = 75;
     let start = createVector(windowWidth / 2, spacing)
     if(words) {
         for (let i = 0; i < words.length; i ++) {
