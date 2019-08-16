@@ -1,5 +1,4 @@
 from gensim import downloader  # Documentation here: https://github.com/RaRe-Technologies/gensim-data
-from gensim.models.word2vec import Word2Vec
 import os
 import dill as pickle
 import matplotlib.pyplot as plt
@@ -9,6 +8,7 @@ import numpy as np
 from scipy.spatial.distance import cosine
 from scipy.interpolate import interp1d, interp2d
 
+# Notes:
 # https://medium.com/@aneesha/using-tsne-to-plot-a-subset-of-similar-words-from-word2vec-bb8eeaea6229
 
 name = 'glove-wiki-gigaword-100'
@@ -38,7 +38,6 @@ def get_similar_matrix(word, n=25):
             print(model[word[0]])
 
     print('vector_size', model.vector_size, 'shape', np.shape(matrix))
-
 
     return matrix, word_labels
 
@@ -100,29 +99,6 @@ def interpolate2D(a, b, c, d, n=10):
 
     return grid
 
-    # print(z[9][0])
-
-    # xv, yv = np.meshgrid(x, y, sparse=False, indexing='ij')
-
-    # print('shape', xv.shape, yv.shape)
-    #
-    #
-    # for i in range(n):
-    #     for j in range(n):
-    #         print(i, j, xv[i,j], yv[j, i])
-
-    # interp = interp2d([a, b], [c, d], [-1, 1])
-    #
-    # # interp = interp2d([-1, 1], [-1, 1], [a + b, c + d])
-    # x = np.linspace(-1, 1, n)
-    # y = np.linspace(-1, 1, n)
-    # return interp(x, y)
-
-# a = [0, 0]
-# b = [0, 1]
-# c = [1, 0]
-# d = [1, 1]
-# interpolate2D(a, b, c, d)
 
 def similar_by_vector(vector, exclude):
     sim_words = [word for word, _ in model.similar_by_vector(vector, topn=10)]
@@ -247,10 +223,6 @@ def word_grid(wa1, wa2, wb1, wb2, extra_exclude=[], output=None, plot=False):
 
     coordinate_grid = np.array([np.array([rotation_matrix.dot(np.array([j, i])) for i in range(n)]) for j in range(n)])
 
-    # Y = vector_grid
-    # vector_grid = vector_grid.reshape((n ** 2, model.vector_size))
-    # word_grid = word_grid.reshape((n ** 2, model.vector_size))
-
     if plot:
         plt.scatter(range(n), range(n), alpha=0)
 
@@ -272,48 +244,6 @@ def word_grid(wa1, wa2, wb1, wb2, extra_exclude=[], output=None, plot=False):
         with open(output, 'w') as f:
             f.write(grid_string)
 
-    print(coordinate_grid)
+    # print(coordinate_grid)
 
     return word_grid, coordinate_grid
-
-#
-#     shape = np.shape(word_grid)
-#
-#     rotated = []
-#     for i in range(0, shape[0]):
-#         row = []
-#         for j in range(i + 1):
-#             print(i, j, '|', i - j, j)
-#             word = word_grid[i - j][j]
-#             row.append(word)
-#         rotated.append(row)
-    #
-
-    # def rotate_grid(word_grid):
-    #
-    #     shape = np.shape(word_grid)
-    #
-    #     rotated = []
-    #     for i in range(0, shape[0]):
-    #         row = []
-    #         for j in range(i + 1):
-    #             print(i, j, '|', i - j, j)
-    #             word = word_grid[i - j][j]
-    #             row.append(word)
-    #         rotated.append(row)
-        #
-    # for k in range(shape[0] + 1, 2 * shape[0] + 1):
-    #     i =
-    #
-    #     row = []
-    #     for j in range(i + 1):
-    #         if (i + j != k):
-    #             break
-    #
-    #         print(i, j, '|', i - j, j)
-    #         word = word_grid[i][j]
-    #         row.append(word)
-    #     rotated.append(row)
-
-
-    return rotated
