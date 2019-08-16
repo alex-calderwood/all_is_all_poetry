@@ -241,8 +241,13 @@ def word_grid(wa1, wa2, wb1, wb2, extra_exclude=[], output=None, plot=False):
     vector_grid = interpolate2D(w, v, x, y, n=n)
     word_grid = words_between2D(vector_grid, exclude=[wa1, wa2, wb1, wb2] + extra_exclude)
 
-    Y = vector_grid
+    theta = np.pi / 4
+    c, s = np.cos(theta), np.sin(theta)
+    rotation_matrix = np.array([[c, -s], [s, c]])
 
+    coordinate_grid = np.array([np.array([rotation_matrix.dot(np.array([j, i])) for i in range(n)]) for j in range(n)])
+
+    # Y = vector_grid
     # vector_grid = vector_grid.reshape((n ** 2, model.vector_size))
     # word_grid = word_grid.reshape((n ** 2, model.vector_size))
 
@@ -267,14 +272,48 @@ def word_grid(wa1, wa2, wb1, wb2, extra_exclude=[], output=None, plot=False):
         with open(output, 'w') as f:
             f.write(grid_string)
 
-    return word_grid
+    print(coordinate_grid)
 
-# plot_along_space_2d(
-#     'black',
-#     'white',
-#     'blue',
-#     'green',
-#     extra_exclude=['brown'],
-#     output='assets/grid.txt'
-# )
+    return word_grid, coordinate_grid
 
+#
+#     shape = np.shape(word_grid)
+#
+#     rotated = []
+#     for i in range(0, shape[0]):
+#         row = []
+#         for j in range(i + 1):
+#             print(i, j, '|', i - j, j)
+#             word = word_grid[i - j][j]
+#             row.append(word)
+#         rotated.append(row)
+    #
+
+    # def rotate_grid(word_grid):
+    #
+    #     shape = np.shape(word_grid)
+    #
+    #     rotated = []
+    #     for i in range(0, shape[0]):
+    #         row = []
+    #         for j in range(i + 1):
+    #             print(i, j, '|', i - j, j)
+    #             word = word_grid[i - j][j]
+    #             row.append(word)
+    #         rotated.append(row)
+        #
+    # for k in range(shape[0] + 1, 2 * shape[0] + 1):
+    #     i =
+    #
+    #     row = []
+    #     for j in range(i + 1):
+    #         if (i + j != k):
+    #             break
+    #
+    #         print(i, j, '|', i - j, j)
+    #         word = word_grid[i][j]
+    #         row.append(word)
+    #     rotated.append(row)
+
+
+    return rotated
