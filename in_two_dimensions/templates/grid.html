@@ -23,29 +23,12 @@
 
   </head>
   <body>
-
-<!--  <table>-->
-<!--    {% for row in grid %}-->
-<!--      <tr>-->
-<!--      {% for word in row %}-->
-<!--        <td>{{word}}</td>-->
-<!--      {% endfor %}-->
-<!--      </tr>-->
-<!--    {% endfor %}-->
-<!--  </table>-->
-
-<!--
-  <div class="container">
-    {% for row in grid %}
-    <div class="row">
-      {% for word in row %}
-        <div class="col">
-          {{word}}
-        </div>
-      {% endfor %}
-      </div>
-    {% endfor %}
-  </div>
--->
+    <form method="POST">
+      <input name="word1" placeholder="top">
+      <input name="word2" placeholder="right">
+      <input name="word3" placeholder="left">
+      <input name="word4" placeholder="down">
+      <button type="submit" class="btn btn-primary">Go</button>
+    </form>
   </body>
 </html>

@@ -203,19 +203,18 @@ def plot_along_space(w1, w2, n=25):
     return matrix
 
 
-def word_grid(wa1, wa2, wb1, wb2, extra_exclude=[], output=None, plot=False):
+def word_grid(w_up, w_down, w_left, w_right, extra_exclude=[], output=None, plot=False, n=7):
 
-    w = model[wa1]
-    v = model[wa2]
-    x = model[wb1]
-    y = model[wb2]
+    w = model[w_up]
+    v = model[w_down]
+    x = model[w_left]
+    y = model[w_right]
 
-    print('plotting', wa1, wa2, wb1, wb2)
+    print('plotting ({} {}) ({} {})'.format(w_up, w_down, w_left, w_right))
 
     # Create an (n x n x vocab_len) grid
-    n = 19
     vector_grid = interpolate2D(w, v, x, y, n=n)
-    word_grid = words_between2D(vector_grid, exclude=[wa1, wa2, wb1, wb2] + extra_exclude)
+    word_grid = words_between2D(vector_grid, exclude=[w_up, w_down, w_left, w_right] + extra_exclude)
 
     theta = np.pi / 4
     c, s = np.cos(theta), np.sin(theta)
