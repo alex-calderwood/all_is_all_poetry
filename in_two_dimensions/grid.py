@@ -115,7 +115,7 @@ def words_between(vectors_between):
     return words
 
 
-def words_between2D(vector_grid, exclude=[]):
+def words_between2D(vector_grid, exclude=None, true_corners=False):
     """
     Given an (n x m x d) grid of word vectors of dimension d, return a (n x m) matrix of their corresponding most similar words.
     :param vector_grid: the vector grid
@@ -123,11 +123,28 @@ def words_between2D(vector_grid, exclude=[]):
         and in the gensim most_similar function. In other words, don't allow any of these words to be in the returned grid
     :return: the new word grid
     """
+
+    if exclude is None:
+        exclude = []
+
+    # Define the four corner points
+    corners = [
+        (0, 0),
+        (vector_grid.shape[0] - 1, 0),
+        (0, vector_grid.shape[1] - 1),
+        (vector_grid.shape[0] - 1, vector_grid.shape[1] - 1)
+    ]
+
     word_grid = []
     for i in range(vector_grid.shape[0]):
         row = []
         for j in range(vector_grid.shape[1]):
-            row.append(similar_by_vector(vector_grid[i][j], exclude))
+            if not true_corners or (i, j) not in corners:
+                # Append the most similar word other than the words to be excluded
+                row.append(similar_by_vector(vector_grid[i][j], exclude))
+            else:
+                # Append the most similar word, which should be one of the four input words
+                row.append(similar_by_vector(vector_grid[i][j], []))
         word_grid.append(row)
 
     return np.array(word_grid)
@@ -203,8 +220,9 @@ def plot_along_space(w1, w2, n=25):
     return matrix
 
 
-def compose_grid(w_up, w_down, w_left, w_right, extra_exclude=[], output=None, plot=False, n=7):
+def compose_grid(w_up, w_down, w_left, w_right, extra_exclude=[], true_corners=False, output=None, plot=False, n=7):
 
+    # Get the four word vectors from the model
     w = model[w_up]
     v = model[w_down]
     x = model[w_left]
@@ -214,7 +232,9 @@ def compose_grid(w_up, w_down, w_left, w_right, extra_exclude=[], output=None, p
 
     # Create an (n x n x vocab_len) grid
     vector_grid = interpolate2D(w, v, x, y, n=n)
-    word_grid = words_between2D(vector_grid, exclude=[w_up, w_down, w_left, w_right] + extra_exclude)
+
+    # Use the vector grid to create an (n x n) grid of words
+    word_grid = words_between2D(vector_grid, exclude=[w_up, w_down, w_left, w_right] + extra_exclude, true_corners=true_corners)
 
     theta = np.pi / 4
     c, s = np.cos(theta), np.sin(theta)
