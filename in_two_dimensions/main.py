@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request, redirect, flash, g
+from flask import Flask, render_template, url_for, request, redirect
 import json
 from .grid import compose_grid
 app = Flask(__name__)
@@ -30,7 +30,7 @@ def grid_post():
         return redirect(url_for('base_grid'))
 
 
-def compose_and_render(words, n=5, true_corners=True):
+def compose_and_render(words, n=3, true_corners=True):
     global previous_words
 
     assert(len(words) == 4)

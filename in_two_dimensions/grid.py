@@ -1,14 +1,11 @@
 from gensim import downloader  # Documentation here: https://github.com/RaRe-Technologies/gensim-data
 import os
 import dill as pickle
-import matplotlib.pyplot as plt
-from sklearn.manifold.t_sne import TSNE
-from sklearn.decomposition import PCA
 import numpy as np
 from scipy.spatial.distance import cosine
 from scipy.interpolate import interp1d, interp2d
 
-# Notes:
+# Original idea with TSNE:
 # https://medium.com/@aneesha/using-tsne-to-plot-a-subset-of-similar-words-from-word2vec-bb8eeaea6229
 
 name = 'glove-wiki-gigaword-100'
@@ -42,43 +39,25 @@ def get_similar_matrix(word, n=25):
     return matrix, word_labels
 
 
-def plot(word):
-    word_matrix, words = get_similar_matrix(word)
-    Y = TSNE(n_components=2).fit_transform(word_matrix)
-
-    # print(Y)
-
-    plt.scatter(Y[:, 0], Y[:, 1], alpha=0)
-
-    for label, x, y in zip(words, Y[:, 0], Y[:, 1]):
-        plt.annotate(label, xy=(x, y), xytext=(-3 * len(label), 0), textcoords='offset points')
-
-    plt.axis('off')
-    plt.title(word, fontsize=20)
-    plt.show()
+# def plot(word):
+#     word_matrix, words = get_similar_matrix(word)
+#     Y = TSNE(n_components=2).fit_transform(word_matrix)
+#
+#     # print(Y)
+#
+#     plt.scatter(Y[:, 0], Y[:, 1], alpha=0)
+#
+#     for label, x, y in zip(words, Y[:, 0], Y[:, 1]):
+#         plt.annotate(label, xy=(x, y), xytext=(-3 * len(label), 0), textcoords='offset points')
+#
+#     plt.axis('off')
+#     plt.title(word, fontsize=20)
+#     plt.show()
 
 
 def interpolate(w, v, n=10):
     interp = interp1d([0, 1], [w, v], axis=0)
     return interp(np.linspace(0, 1, n))
-
-
-def sample_between(a, b, n):
-
-    g = np.linalg.norm
-
-    # Compute distance
-    # d = np.linalg.norm(b - a)
-    # Vector pointing towards b
-    c = (b - a)
-
-    # Halfway between a and b
-    h = (c / 2) + a
-    points = []
-    for i in range(n):
-        points.append(g(c / 2) + h)
-
-    plt.scatter(points, [0] * n)
 
 
 def interpolate2D(a, b, c, d, n=10):
@@ -179,48 +158,7 @@ def walk_zero_space():
         print(i, 'sim', sim, 'not sim', nsim)
 
 
-def plot_along_space(w1, w2, n=25):
-
-    visualize_word(w1)
-    visualize_word(w2)
-
-    w = model[w1]
-    v = model[w2]
-
-    vectors_between = interpolate(w, v, n=n)
-    words = words_between(vectors_between)
-
-    interesting_words = [word for word in words if word not in (w1, w2)]
-
-    if len(interesting_words) > 0:
-        print(interesting_words)
-    else:
-        print("no interesting words")
-
-    matrix = np.array(vectors_between)
-    Y = PCA(n_components=2).fit_transform(matrix)
-    print(Y.shape)
-
-    fig, (ax1, ax2) = plt.subplots(2)
-    fig.suptitle('')
-
-    ax1.set_title(w1 + ' - ' + w2, fontsize=20)
-    ax1.bar(range(model.vector_size), w)
-    ax1.bar(range(model.vector_size), v)
-
-    ax2.scatter(Y[:, 0], Y[:, 1], alpha=0)
-
-    for label, x, y in zip(words, Y[:, 0], Y[:, 1]):
-        ax2.annotate(label, xy=(x, y), xytext=(-3.5 * len(label), 0), textcoords='offset points')
-
-    ax2.axis('off')
-    ax2.set_title('interpolation', fontsize=20)
-    plt.show()
-
-    return matrix
-
-
-def compose_grid(w_up, w_down, w_left, w_right, extra_exclude=[], true_corners=False, output=None, plot=False, n=7):
+def compose_grid(w_up, w_down, w_left, w_right, extra_exclude=[], true_corners=False, output=None, n=7):
 
     # Get the four word vectors from the model
     w = model[w_up]
@@ -236,23 +174,11 @@ def compose_grid(w_up, w_down, w_left, w_right, extra_exclude=[], true_corners=F
     # Use the vector grid to create an (n x n) grid of words
     word_grid = words_between2D(vector_grid, exclude=[w_up, w_down, w_left, w_right] + extra_exclude, true_corners=true_corners)
 
+    # Rotote the grid 45 degrees counterclockwise for aesthetics
     theta = np.pi / 4
     c, s = np.cos(theta), np.sin(theta)
     rotation_matrix = np.array([[c, -s], [s, c]])
-
     coordinate_grid = np.array([np.array([rotation_matrix.dot(np.array([j, i])) for i in range(n)]) for j in range(n)])
-
-    if plot:
-        plt.scatter(range(n), range(n), alpha=0)
-
-        for i in range(n):
-            for j in range(n):
-                label = word_grid[i][j]
-                plt.annotate(label, xy=(i, j), xytext=(-2.5 * len(label), 0), textcoords='offset points')
-
-        plt.axis('off')
-        # plt.set_title('interpolation', fontsize=20)
-        plt.show()
 
     grid_string = ''
 

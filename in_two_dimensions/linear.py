@@ -1,13 +1,5 @@
-from gensim import downloader  # Documentation here: https://github.com/RaRe-Technologies/gensim-data
-from gensim.models.word2vec import Word2Vec
-import os
-import dill as pickle
-import matplotlib.pyplot as plt
-from sklearn.manifold.t_sne import TSNE
-from sklearn.decomposition import PCA
+# import matplotlib.pyplot as plt
 import numpy as np
-from scipy.spatial.distance import cosine
-from scipy.interpolate import interp1d, interp2d
 
 
 def sample_between(a, b, n):
@@ -30,14 +22,14 @@ def sample_between(a, b, n):
     return np.array(points)
 
 
-def test_sample_between():
-
-    a = np.array([0, 0])
-    b = np.array([10, 10])
-
-    points = sample_between(a, b, 10)
-
-    plt.scatter(points[:, 0], points[:, 1])
-    plt.show()
-
-test_sample_between()
+# def test_sample_between():
+#
+#     a = np.array([0, 0])
+#     b = np.array([10, 10])
+#
+#     points = sample_between(a, b, 10)
+#
+#     plt.scatter(points[:, 0], points[:, 1])
+#     plt.show()
+#
+# test_sample_between()
