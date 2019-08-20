@@ -1,18 +1,22 @@
-from flask import render_template, url_for, request, redirect
+from flask import Blueprint, render_template, url_for, request, redirect
 import json
 from .grid import compose_grid
-from . import app
 
 previous_words = ['north', 'west', 'east', 'south']
 
-@app.route('/')
+# Blueprint question https://stackoverflow.com/questions/15583671/flask-how-to-architect-the-project-with-multiple-apps
+# Blueprint doc https://flask.palletsprojects.com/en/1.1.x/blueprints/
+
+two_dimensions = Blueprint('two_dimensions', __name__, template_folder='templates', static_folder='static')
+
+@two_dimensions.route('/')
 def base_grid():
     # Initial value for the 4 word vector directions
     global previous_words
     return compose_and_render(previous_words)
 
 
-@app.route('/', methods=['POST'])
+@two_dimensions.route('/', methods=['POST'])
 def grid_post():
     try:
         n = int(request.form['n'])
