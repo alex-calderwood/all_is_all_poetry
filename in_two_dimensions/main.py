@@ -1,7 +1,7 @@
-from flask import Flask, render_template, url_for, request, redirect
+from flask import render_template, url_for, request, redirect
 import json
 from .grid import compose_grid
-app = Flask(__name__)
+from . import app
 
 previous_words = ['north', 'west', 'east', 'south']
 
