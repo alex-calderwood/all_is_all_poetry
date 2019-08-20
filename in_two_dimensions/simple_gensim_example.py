@@ -1,6 +1,5 @@
 import os
-from gensim import downloader  # Documentation here: https://github.com/RaRe-Technologies/gensim-data
-from gensim.models.word2vec import Word2Vec # https://radimrehurek.com/gensim/models/word2vec.html
+from gensim import downloader  # Downloader documentation here: https://github.com/RaRe-Technologies/gensim-data
 import dill as pickle
 
 """
@@ -15,6 +14,8 @@ print('retrieving model / corpus')
 
 filename = os.path.join('./assets/', name + '.pickle')
 
+# Load a model, which is a Word2Vec object
+# Documentation: https://radimrehurek.com/gensim/models/word2vec.html
 if os.path.exists(filename):
     print('loading cached model')
     model = pickle.load(open(filename, 'rb'))
