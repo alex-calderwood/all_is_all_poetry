@@ -9,32 +9,26 @@ from gensim.models import KeyedVectors
 # Original idea with TSNE:
 # https://medium.com/@aneesha/using-tsne-to-plot-a-subset-of-similar-words-from-word2vec-bb8eeaea6229
 
-name = 'glove-wiki-gigaword-100'
 
-print('retrieving model / corpus')
+def load_model():
+    name = 'glove-wiki-gigaword-100'
 
-# filename = os.path.join('./assets/', name + '.pickle')
+    print('retrieving gensim model')
+    try:
+        print('looking for cached model')
+        model = KeyedVectors.load(name)
+    except Exception as e:
+        print(e)
+        print('couldn\'t lodad cached model. Downloading a fresh copy...')
+        model = downloader.load(name)
+        print('Saving', name)
+        model.save(name)
+    print('Model loaded.')
 
-# if os.path.exists(filename):
-#     print('loading cached model')
-#     model = pickle.load(open(filename, 'rb'))
-# else:  # Train a new model
-#     print('downloading model')
-#     model = downloader.load(name)
-#     pickle.dump(model, open(filename, 'wb'))
+    return model
 
-model = None
-try:
-    print('loading cached model')
-    model = KeyedVectors.load(name)
-except Exception as e:
-    print(e)
-    print('couldn\'t lodad cached model. Downloading a fresh copy...')
-    model = downloader.load(name)
-    print('Saving', name)
-    model.save(name)
-print('Model loaded.')
 
+model = load_model()
 
 
 def get_similar_matrix(word, n=25):
