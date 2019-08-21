@@ -7,7 +7,7 @@ previous_words = ['north', 'west', 'east', 'south']
 # Blueprint question https://stackoverflow.com/questions/15583671/flask-how-to-architect-the-project-with-multiple-apps
 # Blueprint doc https://flask.palletsprojects.com/en/1.1.x/blueprints/
 
-two_dimensions = Blueprint('two_dimensions', __name__, template_folder='templates', static_folder='static')
+two_dimensions = Blueprint('two_dimensions', __name__, url_prefix='/two_dimensions', template_folder='templates', static_folder='static')
 
 @two_dimensions.route('/')
 def base_grid():
