@@ -3,7 +3,7 @@ let fontSize = 14;
 
 function setup() {
     smooth();
-    canvas = createCanvas(windowWidth * 2, windowWidth * 2);
+    canvas = createCanvas(windowWidth, windowHeight);
     textSize(fontSize);
     textFont('Helvetica')
 }

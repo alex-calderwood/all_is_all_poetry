@@ -10,6 +10,7 @@ prev_corners = ['north', 'west', 'east', 'south']
 # Uncomment if this is being used as a module in a seperate flask app (also see __init__.py)
 # two_dimensions = Blueprint('two_dimensions', __name__, url_prefix='/two_dimensions', template_folder='templates', static_folder='static')
 
+
 @app.route('/')
 def base_grid():
     # Initial value for the 4 word vector directions
