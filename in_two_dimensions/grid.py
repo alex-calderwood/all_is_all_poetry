@@ -47,22 +47,6 @@ def get_similar_matrix(word, n=25):
     return matrix, word_labels
 
 
-# def plot(word):
-#     word_matrix, words = get_similar_matrix(word)
-#     Y = TSNE(n_components=2).fit_transform(word_matrix)
-#
-#     # print(Y)
-#
-#     plt.scatter(Y[:, 0], Y[:, 1], alpha=0)
-#
-#     for label, x, y in zip(words, Y[:, 0], Y[:, 1]):
-#         plt.annotate(label, xy=(x, y), xytext=(-3 * len(label), 0), textcoords='offset points')
-#
-#     plt.axis('off')
-#     plt.title(word, fontsize=20)
-#     plt.show()
-
-
 def interpolate(w, v, n=10):
     interp = interp1d([0, 1], [w, v], axis=0)
     return interp(np.linspace(0, 1, n))

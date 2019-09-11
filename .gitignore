@@ -9,3 +9,5 @@ in_two_dimensions/models/
 .idea/
 .ipynb_checkpoints/
 *.pytest_cache/
+
+*.DS_STORE
