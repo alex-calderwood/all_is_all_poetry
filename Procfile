@@ -1,1 +1,1 @@
-web: gunicorn in_two_dimensions/main:app
+web: gunicorn in_two_dimensions.main:app
