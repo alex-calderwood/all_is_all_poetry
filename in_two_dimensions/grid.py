@@ -1,5 +1,6 @@
 from gensim import downloader  # Documentation here: https://github.com/RaRe-Technologies/gensim-data
 import numpy as np
+import dill as pickle
 from scipy.interpolate import interp1d, interp2d
 from gensim.models import KeyedVectors
 
@@ -14,16 +15,20 @@ def load_model():
     else:
         name = 'glove-wiki-gigaword-100'
 
+    pickle_name = name + '.pickle'
+
     print('retrieving gensim model', name)
     try:
         print('looking for cached model')
-        model = KeyedVectors.load(name)
+        # model = KeyedVectors.load(name)
+        model = pickle.load(open(pickle_name, 'rb'))
     except Exception as e:
         print(e)
         print('couldn\'t lodad cached model. Downloading a fresh copy...')
         model = downloader.load(name)
         print('Saving', name)
-        model.save(name)
+        # model.save(name)
+        pickle.dump(model, open(pickle_name, 'wb'))
     print('Model loaded.')
 
     return model
