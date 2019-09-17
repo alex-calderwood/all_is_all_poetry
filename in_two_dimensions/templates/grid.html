@@ -12,6 +12,25 @@
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
+      {# Load Fonts #}
+      {#  https://fonts.google.com/?selection.family=Amatic+SC|Cinzel|Hepta+Slab|Josefin+Slab|Lexend+Tera|Shadows+Into+Light#}
+      <link href="https://fonts.googleapis.com/css?family=Amatic+SC|Cinzel|Hepta+Slab|Josefin+Slab|Lexend+Tera|Shadows+Into+Light&display=swap" rel="stylesheet">
+
+{#
+{#
+{#    font-family: 'Shadows Into Light', cursive;
+{#
+{#    font-family: 'Amatic SC', cursive;
+{#
+{#    font-family: 'Cinzel', serif;
+{#
+{#    font-family: 'Hepta Slab', serif;
+{#
+{#    font-family: 'Lexend Tera', sans-serif;
+{#
+{#    font-family: 'Josefin Slab', serif;#}
+
+
     <script>
       let gridData = {{ grid_words | tojson | safe }};
       let coordinates = {{ coordinates | tojson | safe }};

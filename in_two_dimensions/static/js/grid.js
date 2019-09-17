@@ -1,16 +1,17 @@
 let words, coords;
-let fontSize = 14;
+let fontSize = 20;
+let spacing = 100;
 
 function setup() {
     smooth();
-    canvas = createCanvas(windowWidth, windowHeight);
+    canvas = createCanvas(windowWidth, windowWidth);
     textAlign(CENTER, CENTER);
     textSize(fontSize);
-    textFont('Helvetica')
+    textFont('Shadows Into Light')
+    textFont('Josefin Slab')
 }
 
 function draw() {
-    let spacing = 75;
     let start = createVector(windowWidth / 2, spacing)
 
 //    console.log(spacing * (Math.sqrt(words.length) - 1), windowWidth)

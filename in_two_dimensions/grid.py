@@ -6,11 +6,15 @@ from gensim.models import KeyedVectors
 # Original idea with TSNE:
 # https://medium.com/@aneesha/using-tsne-to-plot-a-subset-of-similar-words-from-word2vec-bb8eeaea6229
 
+phrase = False
 
 def load_model():
-    name = 'glove-wiki-gigaword-100'
+    if phrase:
+        name = "word2vec-google-news-300"
+    else:
+        name = 'glove-wiki-gigaword-100'
 
-    print('retrieving gensim model')
+    print('retrieving gensim model', name)
     try:
         print('looking for cached model')
         model = KeyedVectors.load(name)
@@ -143,7 +147,6 @@ def walk_zero_space():
 
 
 def compose_grid(w_up, w_down, w_left, w_right, extra_exclude=[], true_corners=False, output=None, n=7):
-
     # Get the four word vectors from the model
     vec_up = model[w_up]
     vec_down = model[w_down]
@@ -173,4 +176,8 @@ def compose_grid(w_up, w_down, w_left, w_right, extra_exclude=[], true_corners=F
 
     words = word_grid.flatten().tolist()
     coordinates = coordinate_grid.reshape((-1, 2)).tolist()
+
+    if phrase:
+        words = [word.replace('_', ' ') for word in words]
+
     return words, coordinates
