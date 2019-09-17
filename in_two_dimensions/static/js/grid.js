@@ -4,6 +4,7 @@ let fontSize = 14;
 function setup() {
     smooth();
     canvas = createCanvas(windowWidth, windowHeight);
+    textAlign(CENTER, CENTER);
     textSize(fontSize);
     textFont('Helvetica')
 }
@@ -21,12 +22,22 @@ function draw() {
             word = words[i];
             coordinates = coords[i];
 
-            strokeWeight(10)
-//            point(start.x + coordinates[0] * spacing, start.y + coordinates[1] * spacing)
-            text(word, start.x + coordinates[0] * spacing, start.y + coordinates[1] * spacing);
+            let x = start.x + coordinates[0] * spacing;
+            let y = start.y + coordinates[1] * spacing;
+
+            // if (y > maxY) {
+            //     maxY = y;
+            //     print('resize', y, true)
+            //     resizeCanvas(windowWidth, maxY + 10);
+            // }
+            // strokeWeight(10)
+            // point(x, y)
+
+            text(word, x, y);
         }
     }
     words = null;
+
 }
 
 function setGrid(inWords, inCoords) {

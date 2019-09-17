@@ -13,7 +13,7 @@
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
     <script>
-      let gridData = {{ grid | tojson | safe }};
+      let gridData = {{ grid_words | tojson | safe }};
       let coordinates = {{ coordinates | tojson | safe }};
 
       setGrid(gridData, coordinates);
@@ -22,10 +22,10 @@
   </head>
   <body>
     <form method="POST">
-      <input name="word1" placeholder="{{words[0]}}">
-      <input name="word2" placeholder="{{words[1]}}">
-      <input name="word3" placeholder="{{words[2]}}">
-      <input name="word4" placeholder="{{words[3]}}">
+      <input name="up_word" placeholder="{{words[0]}}">
+      <input name="down_word" placeholder="{{words[1]}}">
+      <input name="left_word" placeholder="{{words[2]}}">
+      <input name="right_word" placeholder="{{words[3]}}">
 
       <select name="n" id="n" class="form-control form-control-sm">
         <option>3</option>

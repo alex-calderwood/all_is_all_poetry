@@ -1,8 +1,5 @@
 from gensim import downloader  # Documentation here: https://github.com/RaRe-Technologies/gensim-data
-import os
-import dill as pickle
 import numpy as np
-from scipy.spatial.distance import cosine
 from scipy.interpolate import interp1d, interp2d
 from gensim.models import KeyedVectors
 
@@ -57,12 +54,11 @@ def interpolate2D(a, b, c, d, n=10):
     dim = len(a)
 
     # Define the interpolated values between the vectors a to b and the vectors c to d
-    x = np.linspace(a, b, num=n)
-    y = np.linspace(c, d, num=n)
+    x = np.linspace(a, d, num=n)
+    y = np.linspace(c, b, num=n)
 
-    # Define a square grid with interpolations from a1 to c1 down to b1 to d1
+    # Define a square grid with interpolations from each x[i] to each y[i]
     grid = np.empty((n, n, dim))
-    print('grid shape', grid.shape)
     for (i, (xi, yi)) in enumerate(zip(x, y)):
         between = np.linspace(xi, yi, n)
         for j in range(n):
@@ -121,10 +117,6 @@ def words_between2D(vector_grid, exclude=None, true_corners=False):
     return np.array(word_grid)
 
 
-def cos(w, v):
-    cosine(w, v)
-
-
 def visualize_word(w):
     v = model[w]
 
@@ -153,36 +145,32 @@ def walk_zero_space():
 def compose_grid(w_up, w_down, w_left, w_right, extra_exclude=[], true_corners=False, output=None, n=7):
 
     # Get the four word vectors from the model
-    w = model[w_up]
-    v = model[w_down]
-    x = model[w_left]
-    y = model[w_right]
+    vec_up = model[w_up]
+    vec_down = model[w_down]
+    vec_left = model[w_left]
+    vec_right = model[w_right]
 
     print('plotting ({} {}) ({} {})'.format(w_up, w_down, w_left, w_right))
 
-    # Create an (n x n x vocab_len) grid
-    vector_grid = interpolate2D(w, v, x, y, n=n)
+    # Create an (n x n x vocab_len) matrix
+    vector_grid = interpolate2D(vec_up, vec_down, vec_left, vec_right, n=n)
 
     # Use the vector grid to create an (n x n) grid of words
     word_grid = words_between2D(vector_grid, exclude=[w_up, w_down, w_left, w_right] + extra_exclude, true_corners=true_corners)
 
-    # Rotote the grid 45 degrees counterclockwise for aesthetics
+    # Create a coordinate matrix, rotated in space 45 degrees counterclockwise for aesthetics
     theta = np.pi / 4
     c, s = np.cos(theta), np.sin(theta)
     rotation_matrix = np.array([[c, -s], [s, c]])
     coordinate_grid = np.array([np.array([rotation_matrix.dot(np.array([j, i])) for i in range(n)]) for j in range(n)])
 
-    grid_string = ''
-
-    for line in word_grid:
-        grid_string += '\t\t'.join([word for word in line]) + '\n'
-
     if output:
+        grid_string = ''
+        for line in word_grid:
+            grid_string += '\t\t'.join([word for word in line]) + '\n'
         with open(output, 'w') as f:
             f.write(grid_string)
 
-    # print(coordinate_grid)
-
-    word_grid = word_grid.flatten().tolist()
-    coordinate_grid = coordinate_grid.reshape((-1, 2)).tolist()
-    return word_grid, coordinate_grid
+    words = word_grid.flatten().tolist()
+    coordinates = coordinate_grid.reshape((-1, 2)).tolist()
+    return words, coordinates

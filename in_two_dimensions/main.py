@@ -3,7 +3,7 @@ from . import app
 import json
 from .grid import compose_grid
 
-prev_corners = ['north', 'west', 'east', 'south']
+prev_corners = ['north', 'south', 'west', 'east']
 
 # Blueprint question https://stackoverflow.com/questions/15583671/flask-how-to-architect-the-project-with-multiple-apps
 # Blueprint doc https://flask.palletsprojects.com/en/1.1.x/blueprints/
@@ -28,10 +28,10 @@ def grid_post():
         true_corners = request.form.get('true-corners')
 
         return compose_and_render([
-            request.form['word1'],
-            request.form['word2'],
-            request.form['word3'],
-            request.form['word4']
+            request.form['up_word'],
+            request.form['down_word'],
+            request.form['left_word'],
+            request.form['right_word']
         ], n=n, true_corners=true_corners)
 
     except KeyError as e:
@@ -50,8 +50,8 @@ def compose_and_render(words, n=3, true_corners=True):
 
     # Get the generated words (an nxn grid) and their corresponding coordinates on the page.
     # Each word in the grid is then linearly interpolated between the 4 passed in
-    grid, coordinates = compose_grid(words[0], words[1], words[2], words[3], n=n, true_corners=true_corners)
-    grid, coordinates = json.dumps(grid), json.dumps(coordinates)
+    grid_words, coordinates = compose_grid(words[0], words[1], words[2], words[3], n=n, true_corners=true_corners)
+    grid_words, coordinates = json.dumps(grid_words), json.dumps(coordinates)
 
     prev_corners = words
 
