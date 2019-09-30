@@ -3,6 +3,7 @@ import numpy as np
 import dill as pickle
 from scipy.interpolate import interp1d, interp2d
 from gensim.models import KeyedVectors
+import math
 
 # Original idea with TSNE:
 # https://medium.com/@aneesha/using-tsne-to-plot-a-subset-of-similar-words-from-word2vec-bb8eeaea6229
@@ -10,12 +11,15 @@ from gensim.models import KeyedVectors
 phrase = False
 
 def load_model():
+    # Pick a model
     if phrase:
         name = "word2vec-google-news-300"
     else:
         name = 'glove-wiki-gigaword-100'
 
-    pickle_name = name + '.pickle'
+    heroku_file_path = ''
+
+    pickle_name = heroku_file_path + name + '.pickle'
 
     print('retrieving gensim model', name)
     try:
@@ -58,7 +62,7 @@ def interpolate(w, v, n=10):
     return interp(np.linspace(0, 1, n))
 
 
-def interpolate2D(a, b, c, d, n=10):
+def grid_2D_interpolate(a, b, c, d, n=10):
     assert(a.shape == b.shape == c.shape == d.shape)
     dim = len(a)
 
@@ -74,6 +78,67 @@ def interpolate2D(a, b, c, d, n=10):
             grid[i][j] = between[j]
 
     return grid
+
+def triangle_interoplate(a, b, c, n=3):
+    """
+    Uses Barycentric Coordinates
+    https://en.wikipedia.org/wiki/Barycentric_coordinate_system
+    :param a, b, c: numpy word vectors returned from gensim
+    """
+    assert(a.shape == b.shape == c.shape)
+
+    # Define the 2D points of the final triangle to be drawn
+    tri = [
+        (0, 0),
+        (0, 1),
+        (0.5, math.sqrt(1.5)),
+    ]
+
+    def barycentric_weights(x, y):
+        # Calulate the weights for each point using the 2D barycentric equation
+        # https://codeplea.com/triangular-interpolation
+        w1 = (tri[1][1] - tri[2][1]) * (x - tri[2][0]) + \
+             (tri[2][0] - tri[1][0]) * (y - tri[2][1])
+        w2 = (tri[2][1] - tri[0][1]) * (x - tri[2][0]) + \
+             (tri[0][0] - tri[2][0]) * (y - tri[2][1])
+        d = (tri[1][1] - tri[2][1]) * (tri[0][0] - tri[2][0]) + \
+            (tri[2][0] - tri[1][0]) * (tri[0][1] - tri[2][1])
+        w1 = w1 / d
+        w2 = w2 / d
+        w3 = 1 - w1 - w2
+
+        # Todo: this will be sped up (I'm gussing) by using scipy
+        #  https://codereview.stackexchange.com/questions/41024/faster-computation-of-barycentric-coordinates-for-many-points
+        return w1, w2, w3
+
+    def point_in_triangle(w1, w2, w3):
+        # 0 <= w1, w2, w3 <= 1
+        # w1 + w2 + w3 = 1
+        return w1 * a + w2 * b + w3 * c
+
+    min_bound = min([p[0] for p in tri]), min(p[1] for p in tri)
+    max_bound = max([p[0] for p in tri]), max(p[1] for p in tri)
+
+    N = 20
+
+    pts = []
+    for i in range(N):
+        w1, w2, w3 = -1, -1, -1
+        while (w1 < 0 or w2 < 0 or w3 < 0): # check that the points are within the triangle
+            x = math.random(min_bound[0], max_bound[0])
+            y = math.random(min_bound[1], max_bound[1])
+            w1, w2, w3 = barycentric_weights(x, y)
+
+        pts.append((x, y, w1, w2, w3))
+
+    # # Simply interpolate between the three to get points on the edges of the triangle
+    # ab = np.linspace(a, b, num=n)
+    # bc = np.linspace(b, c, num=n)
+    # ca = np.linspace(c, a, num=n)
+
+    # each entry in this list will be
+    # ((x, y), interpolated_word_vector)
+    return [((p[0], p[1]), point_in_triangle(p[2], p[3], p[4])) for p in pts]
 
 
 def similar_by_vector(vector, exclude):
@@ -151,6 +216,10 @@ def walk_zero_space():
         print(i, 'sim', sim, 'not sim', nsim)
 
 
+def filled_triangle(w1, w2, w3):
+
+
+
 def compose_grid(w_up, w_down, w_left, w_right, extra_exclude=[], true_corners=False, output=None, n=7):
     # Get the four word vectors from the model
     vec_up = model[w_up]
@@ -161,7 +230,7 @@ def compose_grid(w_up, w_down, w_left, w_right, extra_exclude=[], true_corners=F
     print('plotting ({} {}) ({} {})'.format(w_up, w_down, w_left, w_right))
 
     # Create an (n x n x vocab_len) matrix
-    vector_grid = interpolate2D(vec_up, vec_down, vec_left, vec_right, n=n)
+    vector_grid = grid_2D_interpolate(vec_up, vec_down, vec_left, vec_right, n=n)
 
     # Use the vector grid to create an (n x n) grid of words
     word_grid = words_between2D(vector_grid, exclude=[w_up, w_down, w_left, w_right] + extra_exclude, true_corners=true_corners)
