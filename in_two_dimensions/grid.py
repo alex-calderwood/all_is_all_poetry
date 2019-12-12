@@ -216,9 +216,6 @@ def walk_zero_space():
         print(i, 'sim', sim, 'not sim', nsim)
 
 
-def filled_triangle(w1, w2, w3):
-
-
 
 def compose_grid(w_up, w_down, w_left, w_right, extra_exclude=[], true_corners=False, output=None, n=7):
     # Get the four word vectors from the model
