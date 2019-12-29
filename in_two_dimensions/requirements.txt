@@ -1,0 +1,6 @@
+gunicorn
+Flask
+dill
+numpy
+scikit-learn
+gensim

@@ -10,6 +10,7 @@ import math
 
 phrase = False
 
+
 def load_model():
     # Pick a model
     if phrase:
@@ -78,6 +79,7 @@ def grid_2D_interpolate(a, b, c, d, n=10):
             grid[i][j] = between[j]
 
     return grid
+
 
 def triangle_interoplate(a, b, c, n=3):
     """
@@ -216,8 +218,7 @@ def walk_zero_space():
         print(i, 'sim', sim, 'not sim', nsim)
 
 
-
-def compose_grid(w_up, w_down, w_left, w_right, extra_exclude=[], true_corners=False, output=None, n=7):
+def compose_grid(w_up, w_down, w_left, w_right, extra_exclude=[], true_corners=False, output=None, n=7, rotation=None):
     # Get the four word vectors from the model
     vec_up = model[w_up]
     vec_down = model[w_down]
@@ -233,10 +234,11 @@ def compose_grid(w_up, w_down, w_left, w_right, extra_exclude=[], true_corners=F
     word_grid = words_between2D(vector_grid, exclude=[w_up, w_down, w_left, w_right] + extra_exclude, true_corners=true_corners)
 
     # Create a coordinate matrix, rotated in space 45 degrees counterclockwise for aesthetics
-    theta = np.pi / 4
+    theta = 2 * np.pi * rotation / 360 + np.pi/4 if rotation else np.pi/4
     c, s = np.cos(theta), np.sin(theta)
     rotation_matrix = np.array([[c, -s], [s, c]])
     coordinate_grid = np.array([np.array([rotation_matrix.dot(np.array([j, i])) for i in range(n)]) for j in range(n)])
+    normalize(coordinate_grid, n)
 
     if output:
         grid_string = ''
@@ -252,3 +254,33 @@ def compose_grid(w_up, w_down, w_left, w_right, extra_exclude=[], true_corners=F
         words = [word.replace('_', ' ') for word in words]
 
     return words, coordinates
+
+
+def normalize(coordinate_grid, n):
+    """Normalize all values between the max and min of the coordinates"""
+    min_x = math.inf
+    min_y = math.inf
+    max_x = - math.inf
+    max_y = - math.inf
+    for i in range(n):
+        for j in range(n):
+            c = coordinate_grid[i][j]
+            if c[0] > max_x:
+                max_x = c[0]
+            if c[0] < min_x:
+                min_x = c[0]
+            if c[1] > max_y:
+                max_y = c[1]
+            if c[1] < min_y:
+                min_y = c[1]
+
+    range_x = max_x - min_x
+    range_y = max_y - min_y
+
+    for i in range(n):
+        for j in range(n):
+            c = coordinate_grid[i][j]
+            coordinate_grid[i][j] = np.array([
+                (c[0] - min_x) / range_x,
+                (c[1] - min_y) / range_y
+            ])
