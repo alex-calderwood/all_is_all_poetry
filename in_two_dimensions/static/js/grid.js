@@ -1,13 +1,14 @@
 let words, coords;
 let fontSize = 20;
-let spacing = 250;
+let defaultSpacing = 90;
+let sapcing = null;
 let a = 0;
 
 let doDraw = false;
 
 function setup() {
     smooth();
-    canvas = createCanvas(windowWidth, windowWidth);
+    canvas = createCanvas(windowWidth, windowWidth * 3/2);
     textAlign(CENTER, CENTER);
     textSize(fontSize);
 }
@@ -15,9 +16,6 @@ function setup() {
 function draw() {
     let start = createVector(windowWidth / 2 - spacing / 2, windowHeight / 8)
 
-//    console.log(spacing * (Math.sqrt(words.length) - 1), windowWidth)
-//    let bleedover = spacing * (Math.sqrt(words.length) - 1)> windowWidth
-//    console.log('bleadover ' + bleedover)
     textFont('Josefin Slab')
 
     if(doDraw) {
@@ -57,5 +55,6 @@ function draw() {
 function setGrid(inWords, inCoords) {
     words = JSON.parse(inWords);
     coords = JSON.parse(inCoords);
+    spacing = defaultSpacing * Math.log2(2 * coords.length);
     doDraw = true;
 }
