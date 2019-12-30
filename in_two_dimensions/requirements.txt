@@ -1,5 +1,6 @@
 gunicorn
 Flask
+Flask-Session
 dill
 numpy
 scikit-learn

@@ -58,3 +58,6 @@ input[type=select] {
     border-radius: 0px;
 }
 
+button:focus {
+    outline: none;
+}

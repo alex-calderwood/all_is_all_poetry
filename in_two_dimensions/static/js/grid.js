@@ -2,15 +2,16 @@ let words, coords;
 let fontSize = 20;
 let defaultSpacing = 90;
 let sapcing = null;
-let a = 0;
 
-let doDraw = false;
+let drawCount = 0;
 
 function setup() {
     smooth();
     canvas = createCanvas(windowWidth, windowWidth * 3/2);
     textAlign(CENTER, CENTER);
     textSize(fontSize);
+    frameRate(32);
+    fill(0, 0, 0, 15);
 }
 
 function draw() {
@@ -18,43 +19,34 @@ function draw() {
 
     textFont('Josefin Slab')
 
-    if(doDraw) {
+    if (drawCount == 0) {
         background(255);
-
-        console.log('angle', a);
-        X = []
-        Y = []
-        for (let c of coords) {
-            X.push(c[0]);
-            Y.push(c[1]);
-        }
-        console.log('X', Math.min(...X), Math.max(...X))
-        console.log('Y', Math.min(...Y), Math.max(...Y))
-
-        for (let i = 0; i < words.length; i ++) {
-            word = words[i];
-            coordinates = coords[i];
-
-            let x = start.x + coordinates[0] * spacing;
-            let y = start.y + coordinates[1] * spacing;
-
-            // if (y > maxY) {
-            //     maxY = y;
-            //     print('resize', y, true)
-            //     resizeCanvas(windowWidth, maxY + 10);
-            // }
-            // strokeWeight(10)
-            // point(x, y)
-
-            text(word, x, y);
-        }
+    } else {
+        background(255, 255, 255, 5);
     }
-    doDraw = false;
+
+    // let noise = max(0, random((300 - drawCount)));
+    let window = 60;
+
+    for (let i = 0; i < words.length; i ++) {
+        word = words[i];
+        coordinates = coords[i];
+
+        let noiseX = max(0, (window - drawCount) / 2) * random() - (window);
+        let noiseY = max(0, (window - drawCount) / 2) * random() - (window);
+
+        let x = noiseX + start.x + coordinates[0] * spacing;
+        let y = noiseY + start.y + coordinates[1] * spacing;
+
+        text(word, x, y);
+    }
+
+    drawCount += 1;
 }
 
 function setGrid(inWords, inCoords) {
     words = JSON.parse(inWords);
     coords = JSON.parse(inCoords);
     spacing = defaultSpacing * Math.log2(2 * coords.length);
-    doDraw = true;
+    drawCount = 0;
 }

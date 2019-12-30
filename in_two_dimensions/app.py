@@ -1,5 +1,5 @@
-from flask import Flask
-
+from flask import Flask, session
+from flask_session import Session
 from flask import Blueprint, render_template, url_for, request, redirect
 # from . import app
 import json
@@ -8,6 +8,13 @@ from random import choice
 
 app = Flask(__name__)
 
+app.secret_key = 'asdfasdfasdfasdf1111'
+
+# Set up the user session object
+SESSION_TYPE = 'filesystem'
+app.config.from_object(__name__)
+Session(app)
+
 
 def seed_words():
     return choice([
@@ -15,25 +22,36 @@ def seed_words():
         ['up', 'down', 'left', 'right']
     ])
 
-prev_corners = seed_words()
-prev_n = 3
-prev_rotation = None
+# prev_corners = seed_words()
+# prev_n = 3
+# prev_rotation = None
 
-# Blueprint question https://stackoverflow.com/questions/15583671/flask-how-to-architect-the-project-with-multiple-apps
+# Blueprint question https://stackoverflow.com/questions/15583671/flasks-how-to-architect-the-project-with-multiple-apps
 # Blueprint doc https://flask.palletsprojects.com/en/1.1.x/blueprints/
 # Uncomment if this is being used as a module in a seperate flask app (also see __init__.py)
 # two_dimensions = Blueprint('two_dimensions', __name__, url_prefix='/two_dimensions', template_folder='templates', static_folder='static')
 
+def init_session():
+    if not session.get('initialized'):
+        session['prev_corners'] = seed_words()
+        session['prev_n'] = 3
+        session['prev_rotation'] = None
+
+        session['initialized'] = True
+        print('New Session', session.sid)
+
 
 @app.route('/')
 def base_grid():
-    # Initial value for the 4 word vector directions
-    global prev_corners, prev_n, prev_rotation
-    return compose_and_render(prev_corners, n=prev_n, rotation=prev_rotation)
+    # Initialize a user session
+    init_session()
+
+    return compose_and_render(session.get('prev_corners'), n=session.get('prev_n'), rotation=session.get('prev_rotation'))
 
 
 @app.route('/', methods=['POST'])
 def grid_post():
+    init_session()
     try:
         # Set the size of the grid based on the form drop down menu
         n = int(request.form['n'])
@@ -54,7 +72,7 @@ def grid_post():
 
 
 def compose_and_render(words, n=3, true_corners=True, rotation=None):
-    global prev_corners
+    prev_corners = session.get('prev_corners')
 
     assert(len(words) == 4)
 
@@ -67,9 +85,11 @@ def compose_and_render(words, n=3, true_corners=True, rotation=None):
     grid_words, coordinates = compose_grid(words[0], words[1], words[2], words[3], n=n, true_corners=true_corners, rotation=rotation)
     grid_words, coordinates = json.dumps(grid_words), json.dumps(coordinates)
 
-    prev_corners = words
-    prev_n = n
-    prev_rotation = rotation
+    # Save data from this query as session variables
+    session['prev_corners'] = words
+    session['prev_n'] = n
+    session['prev_rotation'] = rotation
+
 
     true_corners_checked = 'checked' if true_corners else ''
 

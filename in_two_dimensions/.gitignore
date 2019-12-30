@@ -1,3 +1,4 @@
+flask_session/
 word2vec-google-news-300
 word2vec-google-news-300.vectors.npy
 *glove-wiki-gigaword*
