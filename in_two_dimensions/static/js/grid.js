@@ -18,8 +18,6 @@ function setup() {
     textSize(fontSize);
     frameRate(32);
 
-    console.log('canvas', canvas)
-
     up = select('#up');
     down = select('#down');
     left = select('#left');
@@ -30,17 +28,14 @@ function setup() {
 
 function draw() {
 
-    
     let start = createVector(windowWidth / 2 - spacing / 2, realCanvasY + windowHeight / 6)
 
     textFont('Josefin Slab')
 
     if (drawCount == 0) {
-        // background(255);
         fill(255)
         rect(0, 200, windowWidth, windowWidth * 3 /2);
     } else {
-        // background(255, 255, 255, 30);
         fill(255, 255, 255, 30)
         rect(0, realCanvasY, windowWidth, windowWidth * 3 /2);
     }
