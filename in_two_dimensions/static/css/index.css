@@ -1,6 +1,6 @@
 form {
     padding: 1%;
-    padding-top: 3%;
+    /* padding-top: 3%; */
     width: 80%;
     margin: auto;
 }
@@ -10,7 +10,7 @@ form {
     margin: auto;
     padding-left: 5%;
     padding-right: 5%;
-    padding-top: 1%;
+    /* padding-top: 1%; */
 }
 
 button {
@@ -33,7 +33,9 @@ button:hover {
 }
 
 input[type=text] {
-    width: 22.0%;
+    /* width: 22.0%; */
+    width: 200px;
+    height: 30px;
     border: none;
     border-bottom: 4px solid #dddddd;  
     margin-left: 1%;

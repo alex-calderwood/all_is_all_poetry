@@ -24,7 +24,7 @@
       <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
 
       <script type="text/javascript" src="{{ url_for('static', filename='lib/p5.js') }}"></script>
-      <script type="text/javascript"  src="{{ url_for('static', filename='js/grid.js') }}"></script>
+      <script type="text/javascript"  src="{{ url_for('static', filename='js/grid.js') }}?{{version_num}}"></script>
 
   </head>
   <body>
@@ -37,16 +37,15 @@
     </script>
 
     <form method="POST">
-      <input type="text" name="up_word" placeholder="{{words[0]}}">
-      <input type="text" name="down_word" placeholder="{{words[1]}}">
-      <input type="text" name="left_word" placeholder="{{words[2]}}">
-      <input type="text" name="right_word" placeholder="{{words[3]}}">
-
+      <input id="up" type="text" name="up_word" placeholder="{{words[0]}}" autocomplete="off">
+      <input id="down" type="text" name="down_word" placeholder="{{words[1]}}" autocomplete="off">
+      <input id="left" type="text" name="left_word" placeholder="{{words[2]}}" autocomplete="off">
+      <input id="right" type="text" name="right_word" placeholder="{{words[3]}}" autocomplete="off"down
       <br>
       <div id="submit-line">
 
         <label for="n">Width</label>
-        <select name="n" id="n" class="form-control-sm">
+        <select name="n" id="n" class="form-control-sm" autocomplete="off">
           <option>3</option>
           <option>5</option>
           <option>7</option>
@@ -54,7 +53,7 @@
         </select>
   
         <label for="rotation">Rotation</label>
-        <select id="rotation" name="rotation" class="form-control-sm">
+        <select id="rotation" name="rotation" class="form-control-sm" autocomplete="off">
           <option selected="selected">0</option>
           <option>90</option>
           <option>180</option>

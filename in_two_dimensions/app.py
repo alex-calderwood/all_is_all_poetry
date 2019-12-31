@@ -15,6 +15,10 @@ SESSION_TYPE = 'filesystem'
 app.config.from_object(__name__)
 Session(app)
 
+# Set the version number
+# This is used when deciding when to update the javascript file grid.js
+VERSION = '1.0.3'
+
 
 def seed_words():
     return choice([
@@ -72,6 +76,11 @@ def grid_post():
 
 
 def compose_and_render(words, n=3, true_corners=True, rotation=None):
+    
+    # Get the version number (passed through **locals to the template)
+    global VERSION
+    version_num = VERSION
+
     prev_corners = session.get('prev_corners')
 
     assert(len(words) == 4)
