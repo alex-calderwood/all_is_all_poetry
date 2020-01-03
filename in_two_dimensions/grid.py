@@ -4,12 +4,14 @@ import dill as pickle
 from scipy.interpolate import interp1d, interp2d
 from gensim.models import KeyedVectors
 import math
+from nltk.stem.snowball import SnowballStemmer
 
 # Original idea with TSNE:
 # https://medium.com/@aneesha/using-tsne-to-plot-a-subset-of-similar-words-from-word2vec-bb8eeaea6229
 
 phrase = False
 
+stemmer = SnowballStemmer(language='english')
 
 def load_model():
     # Pick a model
@@ -147,7 +149,7 @@ def similar_by_vector(vector, exclude):
     sim_words = [word for word, _ in model.similar_by_vector(vector, topn=10)]
 
     for word in sim_words:
-        if word not in exclude:
+        if word not in exclude and stemmer.stem(word) not in exclude:
             return word
 
     return ''
@@ -227,11 +229,15 @@ def compose_grid(w_up, w_down, w_left, w_right, extra_exclude=[], true_corners=F
 
     print('plotting ({} {}) ({} {})'.format(w_up, w_down, w_left, w_right))
 
+    # Set up the list of words to exclude from the grid, including lemmas of the four corner words
+    exclude = [w_up, w_down, w_left, w_right] + extra_exclude
+    exclude = [stemmer.stem(word) for word in exclude] + exclude
+
     # Create an (n x n x vocab_len) matrix
     vector_grid = grid_2D_interpolate(vec_up, vec_down, vec_left, vec_right, n=n)
 
     # Use the vector grid to create an (n x n) grid of words
-    word_grid = words_between2D(vector_grid, exclude=[w_up, w_down, w_left, w_right] + extra_exclude, true_corners=true_corners)
+    word_grid = words_between2D(vector_grid, exclude=exclude, true_corners=true_corners)
 
     # Create a coordinate matrix, rotated in space 45 degrees counterclockwise for aesthetics
     theta = 2 * np.pi * rotation / 360 + np.pi/4 if rotation else np.pi/4

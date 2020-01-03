@@ -3,7 +3,7 @@ let fontSize = 20;
 let defaultSpacing = 90;
 let sapcing = null;
 
-let realCanvasY = 100;
+let realCanvasY = 20;
 
 let drawCount = 0;
 let n;

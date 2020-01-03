@@ -17,7 +17,7 @@ Session(app)
 
 # Set the version number
 # This is used when deciding when to update the javascript file grid.js
-VERSION = '1.0.4'
+VERSION = '1.0.5'
 
 
 def seed_words():

@@ -1,3 +1,4 @@
+nltk
 gunicorn
 Flask
 Flask-Session
