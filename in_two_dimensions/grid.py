@@ -220,7 +220,7 @@ def walk_zero_space():
         print(i, 'sim', sim, 'not sim', nsim)
 
 
-def compose_grid(w_up, w_down, w_left, w_right, extra_exclude=[], true_corners=False, output=None, n=7, rotation=None):
+def compose_grid(w_up, w_down, w_left, w_right, extra_exclude=[], true_corners=False, output=None, n=3, rotation=None):
     # Get the four word vectors from the model
     vec_up = model[w_up]
     vec_down = model[w_down]
