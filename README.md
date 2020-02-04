@@ -40,7 +40,7 @@ https://www.cs.utoronto.ca/~ilya/pubs/2011/LANG-RNN.pdf
 
 https://arxiv.org/abs/1804.08473
 
-	This one is really outstanding. One of the most interesting papers I've read about deep learning. 
+// This one is really outstanding. One of the most interesting papers I've read about deep learning. 
 
 https://www.frontiersin.org/articles/10.3389/fdigh.2018.00005/full
 
@@ -49,6 +49,10 @@ https://www.frontiersin.org/articles/10.3389/fdigh.2018.00005/full
 *Text Generation With LSTM Recurrent Neural Networks in Python with Keras*
 
 https://machinelearningmastery.com/text-generation-lstm-recurrent-neural-networks-python-keras/
+
+*The Illustrated Transformer - Jay Alammar*
+
+https://jalammar.github.io/illustrated-transformer/
 
 
 ## Other
