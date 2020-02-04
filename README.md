@@ -8,13 +8,11 @@
 
 Here are a few different surveys and introductions to the field of generative poetry that I've found useful.
 
+## Examples 
+
 *Pentametron*
 
 https://twitter.com/pentametron?lang=en
-
-*Andrej Karpathy*
-
-https://github.com/karpathy/char-rn
 
 *When you Reach Kyoto - Brian Kim Stefans*
 
@@ -56,10 +54,14 @@ https://machinelearningmastery.com/text-generation-lstm-recurrent-neural-network
 
 https://jalammar.github.io/illustrated-transformer/
 
+*Andrej Karpathy*
+
+https://github.com/karpathy/char-rn
+
 
 ## Other
 
-*Quote from the Plotinus, THE SIX ENNEADS*
+*Quote from Plotinus, THE SIX ENNEADS*
 
 http://www.sacred-texts.com/cla/plotenn/enn481.htm
 
