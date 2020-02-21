@@ -32,14 +32,33 @@ class Transformer(nn.Module):
         self.encoding_layers = [MultiHeadAttentionEncodingLayer(heads, d_model, dk, dv, p_drop, dff) for _ in range(encoding_layers)]
         self.decoding_layers = [MultiHeadAttentionDecodingLayer(heads, d_model, dk, dv, p_drop, dff) for _ in range(decoding_layers)]
 
+        # Set activation function
+        self.activation = nn.functional.relu
+
+        # Linear
+        linear_shape = (d_model, dictionary.size)
+        self.W = torch.randn(linear_shape[0], linear_shape[1])
+        self.b = torch.randn(linear_shape[1])
+
     @forward
-    def forward(self, x):
-        pos_en = PositionalEncoding(x, self.d_model, self.dictionary)
+    def forward(self, source, target):
 
         # Pass the encoding sequentially to each layer of the encoding
-        out = pos_en.embedding
+        src_emb = PositionalEncoding(source, self.d_model, self.dictionary)
+        src_emb = src_emb.embedding
         for multi_head_encoding_layer in self.encoding_layers:
-            out = multi_head_encoding_layer(out)
+            src_emb = multi_head_encoding_layer(src_emb)
+
+        # Pass the embedding output and
+        target_emb = PositionalEncoding(target, self.d_model, self.dictionary)
+        target_emb = target_emb.embedding
+        for multi_head_decoding_layer in self.decoding_layers:
+            # Target embedding updates each step, src_emb does not
+            target_emb = multi_head_decoding_layer(target_emb, src_emb)
+
+        # Linear
+        out = target_emb.matmul(self.W) + self.b
+        out = torch.softmax(out, dim=1) # TODO double check this shape
 
         return out
 
@@ -71,10 +90,10 @@ class MultiHeadAttentionEncodingLayer(nn.Module):
 
     @forward
     def forward(self, src):
-        attn_out = self.multi_head_attention(src)
+        attn_out = self.multi_head_attention(src, src, src)
         attn_out = self.norm1(attn_out + src)
 
-        # Feed forward x 2  # TODO does it make sense that there is no activation applied to the last one?
+    # Feed forward x 2
         ff_out = self.activation(attn_out.matmul(self.W1) + self.b1)
         ff_out = ff_out.matmul(self.W2) + self.b2
 
@@ -93,6 +112,7 @@ class MultiHeadAttentionDecodingLayer(nn.Module):
         self.masked_multi_head_attention = MultiheadAttention(n_heads, d_model, dk, dv, p_drop, dff)
         self.norm1 = nn.LayerNorm(d_model)
 
+        # Multi head attention x 6
         self.multi_head_attention = MultiheadAttention(n_heads, d_model, dk, dv, p_drop, dff)
         self.norm2 = nn.LayerNorm(d_model)
 
@@ -109,30 +129,31 @@ class MultiHeadAttentionDecodingLayer(nn.Module):
         self.W2 = torch.randn(head_out_shape[0], head_out_shape[1])
         self.b2 = torch.randn(d_model)
 
-        # Layer norm 2
-        self.layer_norm2 = nn.LayerNorm(d_model)
+        # Layer norm 3
+        self.norm3 = nn.LayerNorm(d_model)
 
     @forward
-    def forward(self, src, target):
+    def forward(self, target, memory):
+        """
+        :param target:
+        :param memory: TODO explain better than pytorch does, think about PRing pytorch
+        """
 
         # TODO implement mask
-        output = self.mask(target)
-
-        # TODO are we supposed to be using the embedding Q, K, V???
+        target = self.mask(target)
 
         # First attention layer
-        attn_out_1 = self.masked_multi_head_attention(output)
-        attn_out_1 = self.norm1(attn_out_1 + output)
+        attn_out_1 = self.masked_multi_head_attention(target, target, target)
+        attn_out_1 = self.norm1(attn_out_1 + target)
 
-        attn_out_2 = self.multi_head_attention(attn_out_1)
+        # Second attention layer
+        attn_out_2 = self.multi_head_attention(attn_out_1, memory, memory)
+        attn_out_2 = self.norm2(attn_out_2 + attn_out_1)
 
-
-        # Feed forward x 2  # TODO does it make sense that there is no activation applied to the last one?
-        ff_out = self.activation(attn_out.matmul(self.W1) + self.b1)
+        # Feed forward x 2
+        ff_out = self.activation(attn_out_2.matmul(self.W1) + self.b1)
         ff_out = ff_out.matmul(self.W2) + self.b2
-
-        # Connect second residual and apply layer norm
-        ff_out = self.layer_norm2(ff_out + attn_out)
+        ff_out = self.norm3(ff_out + attn_out_2)
 
         return ff_out
 
@@ -151,15 +172,14 @@ class MultiheadAttention(nn.Module):
         self.WO = torch.randn(self.n_heads * dk, d_model)
 
     @forward
-    def forward(self, src):
+    def forward(self, queries, keys, values):
         """
-        :param src: either the input from the previous layer of the transformer, or the
-        original embedding sequence.
+
         """
         Z = []
         for head in self.heads:
             # Pass the encoded vector to each head
-            head_out = head(src, src, src)
+            head_out = head(queries, keys, values)
             # Save
             Z.append(head_out)
 
@@ -353,5 +373,9 @@ if __name__ == '__main__':
     # dictionary = Dictionary('corpus.pickle')
     # print(dictionary)
     net = Transformer(dictionary)
-    sentence = 'The cat jumped over the hat and died I think.'.split(' ')
-    net.forward(sentence)
+    sentence = 'The cat jumped over the hat.'.split(' ')
+    out = net.forward(sentence, sentence)
+
+    predicted_sequence = torch.argmax(out, dim=1)
+    print(out.shape)
+    print(' '.join([dictionary.word(id=word) for word in predicted_sequence.detach().numpy()]))
