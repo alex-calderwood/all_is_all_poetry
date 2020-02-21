@@ -9,7 +9,10 @@ def forward(func):
     """Decorator to print name of function call
     """
     def wrapper(*args, **kwargs):
-        print(f'{func.__qualname__}', args[1].shape if isinstance(args[1], torch.Tensor) else len(args[1]))
+
+        arg_lengths = [args[i].shape if isinstance(args[i], torch.Tensor) else len(args[i]) for i in range(1, len(args))]
+
+        print(f'{func.__qualname__}', arg_lengths)
         return func(*args, **kwargs)
     return wrapper
 
@@ -27,8 +30,7 @@ class Transformer(nn.Module):
         self.d_model = d_model
 
         self.encoding_layers = [MultiHeadAttentionEncodingLayer(heads, d_model, dk, dv, p_drop, dff) for _ in range(encoding_layers)]
-
-        # self.decoding_layers = [MultiHeadAttentionDecodingLayer(heads, d_model, dk, dv, p_drop, dff) for _ in range(decoding_layers)]
+        self.decoding_layers = [MultiHeadAttentionDecodingLayer(heads, d_model, dk, dv, p_drop, dff) for _ in range(decoding_layers)]
 
     @forward
     def forward(self, x):
@@ -68,9 +70,9 @@ class MultiHeadAttentionEncodingLayer(nn.Module):
         self.layer_norm2 = nn.LayerNorm(d_model)
 
     @forward
-    def forward(self, x):
-        attn_out = self.multi_head_attention(x)
-        attn_out = self.norm1(attn_out + x)
+    def forward(self, src):
+        attn_out = self.multi_head_attention(src)
+        attn_out = self.norm1(attn_out + src)
 
         # Feed forward x 2  # TODO does it make sense that there is no activation applied to the last one?
         ff_out = self.activation(attn_out.matmul(self.W1) + self.b1)
@@ -111,10 +113,10 @@ class MultiHeadAttentionDecodingLayer(nn.Module):
         self.layer_norm2 = nn.LayerNorm(d_model)
 
     @forward
-    def forward(self, input_embedding, output):
+    def forward(self, src, target):
 
         # TODO implement mask
-        output = self.mask(output)
+        output = self.mask(target)
 
         # TODO are we supposed to be using the embedding Q, K, V???
 
@@ -149,11 +151,15 @@ class MultiheadAttention(nn.Module):
         self.WO = torch.randn(self.n_heads * dk, d_model)
 
     @forward
-    def forward(self, x):
+    def forward(self, src):
+        """
+        :param src: either the input from the previous layer of the transformer, or the
+        original embedding sequence.
+        """
         Z = []
         for head in self.heads:
             # Pass the encoded vector to each head
-            head_out = head(x)
+            head_out = head(src, src, src)
             # Save
             Z.append(head_out)
 
@@ -180,21 +186,27 @@ class AttentionHead(nn.Module):
         self.WV = torch.randn(d_model, dv)
 
     @forward
-    def forward(self, E, queries=None, keys=None, values=None):
+    def forward(self, queries, keys, values):
         """
-        :param E: An embedding matrix of dimension (seq_len, d_model)
+        queries, keys, and values will be multiplied by their respective parameter
+        matrices to make the q, k, v matrices used in attention.
+
+        :param queries: An embedding matrix of dimension (output_len, d_model)
+        :param keys: An embedding matrix of dimension (seq_len, d_model)
+        :param values: An embedding matrix of dimension (seq_len, d_model)
+
+        In a self-attention layer all of the keys, values and queries come
+        from the previous layer in the encoder.
         """
 
-        if not queries:
-            queries = E.matmul(self.WQ)
-        if not keys:
-            keys = E.matmul(self.WK)
-        if not values:
-            values = E.matmul(self.WV)  # TODO FIGUREOUT WHERE THESE COME FROM IN ENCODER-DECODER STEP
+        q = queries.matmul(self.WQ)
+        k = keys.matmul(self.WK)
+        v = values.matmul(self.WV)
 
-        att = queries.matmul(keys.T) / math.sqrt(self.dk)
-        Z = torch.softmax(att, dim=1).matmul(values)
-        return Z
+        att = q.matmul(k.T) / math.sqrt(self.dk)
+        z = torch.softmax(att, dim=1).matmul(v)
+
+        return z
 
 
 class PositionalEncoding():
